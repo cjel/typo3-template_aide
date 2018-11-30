@@ -1,0 +1,80 @@
+{
+    "modules": [
+        {
+            "config": {
+                "position": [
+                    78,
+                    217
+                ]
+            },
+            "name": "New Model Object",
+            "value": {
+                "actionGroup": {
+                    "_default0_list": true,
+                    "_default1_show": false,
+                    "_default2_new_create": false,
+                    "_default3_edit_update": false,
+                    "_default4_delete": false,
+                    "customActions": []
+                },
+                "name": "Dummy",
+                "objectsettings": {
+                    "addDeletedField": true,
+                    "addHiddenField": true,
+                    "addStarttimeEndtimeFields": true,
+                    "aggregateRoot": false,
+                    "categorizable": false,
+                    "description": "",
+                    "mapToTable": "",
+                    "parentClass": "",
+                    "skipTypeConfiguration": false,
+                    "sorting": false,
+                    "type": "Entity",
+                    "uid": "902454128297"
+                },
+                "propertyGroup": {
+                    "properties": []
+                },
+                "relationGroup": {
+                    "relations": []
+                }
+            }
+        }
+    ],
+    "properties": {
+        "backendModules": [],
+        "description": "",
+        "emConf": {
+            "category": "plugin",
+            "custom_category": "",
+            "dependsOn": "typo3 => 8.7.0-8.7.99\n",
+            "disableLocalization": false,
+            "disableVersioning": false,
+            "skipGenerateDocumentationTemplate": false,
+            "sourceLanguage": "en",
+            "state": "alpha",
+            "targetVersion": "8.7.0-8.7.99",
+            "version": "0.0.1"
+        },
+        "extensionKey": "templates_aide",
+        "name": "Templates Aide",
+        "originalExtensionKey": "templates_aide",
+        "originalVendorName": "Cjel",
+        "persons": [
+            {
+                "company": "",
+                "email": "philippdieter@attic-media.net",
+                "name": "Philipp Dieter",
+                "role": "Developer"
+            }
+        ],
+        "plugins": [],
+        "vendorName": "Cjel"
+    },
+    "wires": [],
+    "log": {
+        "last_modified": "2018-11-29 03:46",
+        "extension_builder_version": "8.10.2",
+        "be_user": "Philipp Dieter (1)"
+    }
+}
