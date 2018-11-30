@@ -68,12 +68,23 @@
                 "role": "Developer"
             }
         ],
-        "plugins": [],
+        "plugins": [
+            {
+                "actions": {
+                    "controllerActionCombinations": "",
+                    "noncacheableActions": "",
+                    "switchableActions": ""
+                },
+                "description": "",
+                "key": "dummy",
+                "name": "dummy"
+            }
+        ],
         "vendorName": "Cjel"
     },
     "wires": [],
     "log": {
-        "last_modified": "2018-11-29 03:46",
+        "last_modified": "2018-11-30 10:40",
         "extension_builder_version": "8.10.2",
         "be_user": "Philipp Dieter (1)"
     }

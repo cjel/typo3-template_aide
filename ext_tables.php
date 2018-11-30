@@ -5,6 +5,12 @@ call_user_func(
     function()
     {
 
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
+            'Cjel.TemplatesAide',
+            'Dummy',
+            'dummy'
+        );
+
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile('templates_aide', 'Configuration/TypoScript', 'Templates Aide');
 
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_templatesaide_domain_model_dummy', 'EXT:templates_aide/Resources/Private/Language/locallang_csh_tx_templatesaide_domain_model_dummy.xlf');
