@@ -39,7 +39,6 @@ class WizardItems implements NewContentElementWizardHookInterface
      */
     public function manipulateWizardItems(&$wizardItems, &$parentObject)
     {
-        \TYPO3\CMS\Core\Utility\DebugUtility::debug($parentObject);
     }
 
 
