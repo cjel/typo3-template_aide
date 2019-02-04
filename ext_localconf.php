@@ -47,3 +47,9 @@ call_user_func(
     }
 );
 ## EXTENSION BUILDER DEFAULTS END TOKEN - Everything BEFORE this line is overwritten with the defaults of the extension builder
+
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1549297828] = [
+   'nodeName' => 'additionalHelpText',
+   'priority' => 30,
+   'class' => \Cjel\TemplatesAide\FormEngine\AdditionalHelpText::class,
+];
