@@ -46,8 +46,6 @@ class DbTableViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
         }
         $data = $data->execute()->fetchAll();
 
-        \TYPO3\CMS\Core\Utility\DebugUtility::debug($data);
-
         return $data;
     }
 }
