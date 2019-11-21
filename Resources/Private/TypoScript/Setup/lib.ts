@@ -12,3 +12,14 @@ lib.currentPid.data = TSFE:id
 
 lib.pidCurrent = TEXT
 lib.pidCurrent.data = TSFE:id
+
+lib.gpvar = COA
+lib.gpvar {
+  stdWrap.htmlSpecialChars = 1
+  10 = TEXT
+  10 {
+    dataWrap = GP:{current}
+    insertData = 1
+    wrap3 = {|}
+  }
+}
