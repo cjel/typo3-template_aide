@@ -23,3 +23,6 @@ lib.gpvar {
     wrap3 = {|}
   }
 }
+
+lib.contentMain < styles.content.get
+lib.contentMain.select.where = colPos = 0
