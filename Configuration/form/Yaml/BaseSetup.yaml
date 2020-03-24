@@ -24,11 +24,11 @@ TYPO3:
                 __inheritances:
                   10: 'TYPO3.CMS.Form.mixins.translationSettingsMixin'
                 templateRootPaths:
-                  20: 'EXT:site_templates/Resources/form/Private/Frontend/Templates/'
+                  20: 'EXT:site_templates/Resources/Private/form/Frontend/Templates/'
                 partialRootPaths:
-                  20: 'EXT:site_templates/Resources/form/Private/Frontend/Partials/'
+                  20: 'EXT:site_templates/Resources/Private/form/Frontend/Partials/'
                 layoutRootPaths:
-                  20: 'EXT:site_templates/Resources/form/Private/Frontend/Layouts/'
+                  20: 'EXT:site_templates/Resources/Private/form/Frontend/Layouts/'
                 addQueryString: false
                 argumentsToBeExcludedFromQueryString: []
                 additionalParams: []
