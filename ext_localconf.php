@@ -53,3 +53,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1549297828] = [
    'priority' => 30,
    'class' => \Cjel\TemplatesAide\FormEngine\AdditionalHelpText::class,
 ];
+
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['c'] = [];
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['c'][]
+  = 'Cjel\TemplatesAide\ViewHelpers';
