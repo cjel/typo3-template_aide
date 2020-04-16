@@ -31,11 +31,11 @@ pageContentelement {
     10 {
         userFunc = Cjel\TemplatesAide\UserFunc\RenderContentelement->render
     }
-   config {
-      disableAllHeaderCode = 1
-      xhtml_cleaning = 0
-      admPanel = 0
-      debug = 0
-      no_cache = 1
-   }
+    config {
+        disableAllHeaderCode = 1
+        xhtml_cleaning = 0
+        admPanel = 0
+        debug = 0
+        no_cache = 1
+    }
 }
