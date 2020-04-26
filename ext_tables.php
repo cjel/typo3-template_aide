@@ -38,10 +38,10 @@ call_user_func(
         }
 
         if (TYPO3_MODE == 'BE') {
-            $pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                \TYPO3\CMS\Core\Page\PageRenderer::class
-            );
-            $pageRenderer->loadRequireJsModule('TYPO3/CMS/TemplatesAide/NewContentElementWizardPreview');
+            //$pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+            //    \TYPO3\CMS\Core\Page\PageRenderer::class
+            //);
+            //$pageRenderer->loadRequireJsModule('TYPO3/CMS/TemplatesAide/NewContentElementWizardPreview');
 
             \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addUserTSConfig(
                 '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:templates_aide/Resources/Private/UserTSConfig/default.ts">'
