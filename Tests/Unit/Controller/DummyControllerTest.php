@@ -6,7 +6,7 @@ namespace Cjel\TemplatesAide\Tests\Unit\Controller;
  *
  * @author Philipp Dieter <philippdieter@attic-media.net>
  */
-class DummyControllerTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+class DummyControllerTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
     /**
      * @var \Cjel\TemplatesAide\Controller\DummyController

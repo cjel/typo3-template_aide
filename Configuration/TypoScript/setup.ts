@@ -1,11 +1,11 @@
 
 plugin.tx_templatesaide_dummy {
     view {
-        templateRootPaths.0 = EXT:templates_aide/Resources/Private/Templates/
+        templateRootPaths.0 = EXT:{extension.shortExtensionKey}/Resources/Private/Templates/
         templateRootPaths.1 = {$plugin.tx_templatesaide_dummy.view.templateRootPath}
         partialRootPaths.0 = EXT:templates_aide/Resources/Private/Partials/
         partialRootPaths.1 = {$plugin.tx_templatesaide_dummy.view.partialRootPath}
-        layoutRootPaths.0 = EXT:templates_aide/Resources/Private/Layouts/
+        layoutRootPaths.0 = EXT:tx_templatesaide/Resources/Private/Layouts/
         layoutRootPaths.1 = {$plugin.tx_templatesaide_dummy.view.layoutRootPath}
     }
     persistence {

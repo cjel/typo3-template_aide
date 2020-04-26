@@ -1,6 +1,7 @@
 <?php
 namespace Cjel\TemplatesAide\Domain\Model;
 
+
 /***
  *
  * This file is part of the "Templates Aide" Extension for TYPO3 CMS.
@@ -11,10 +12,9 @@ namespace Cjel\TemplatesAide\Domain\Model;
  *  (c) 2018 Philipp Dieter <philippdieter@attic-media.net>
  *
  ***/
-
 /**
  * Dummy
  */
 class Dummy extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
-    }
+}

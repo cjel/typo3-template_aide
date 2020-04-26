@@ -1,6 +1,7 @@
 <?php
 namespace Cjel\TemplatesAide\Controller;
 
+
 /***
  *
  * This file is part of the "Templates Aide" Extension for TYPO3 CMS.
@@ -11,15 +12,15 @@ namespace Cjel\TemplatesAide\Controller;
  *  (c) 2018 Philipp Dieter <philippdieter@attic-media.net>
  *
  ***/
-
 /**
  * DummyController
  */
 class DummyController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
+
     /**
      * action list
-     *
+     * 
      * @return void
      */
     public function listAction()

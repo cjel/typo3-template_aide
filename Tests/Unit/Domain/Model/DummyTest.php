@@ -6,7 +6,7 @@ namespace Cjel\TemplatesAide\Tests\Unit\Domain\Model;
  *
  * @author Philipp Dieter <philippdieter@attic-media.net>
  */
-class DummyTest extends \TYPO3\CMS\Core\Tests\UnitTestCase
+class DummyTest extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
 {
     /**
      * @var \Cjel\TemplatesAide\Domain\Model\Dummy

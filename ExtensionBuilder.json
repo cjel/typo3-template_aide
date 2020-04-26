@@ -27,7 +27,6 @@
                     "description": "",
                     "mapToTable": "",
                     "parentClass": "",
-                    "skipTypeConfiguration": false,
                     "sorting": false,
                     "type": "Entity",
                     "uid": "902454128297"
@@ -47,13 +46,13 @@
         "emConf": {
             "category": "plugin",
             "custom_category": "",
-            "dependsOn": "typo3 => 8.7.0-8.7.99\n",
+            "dependsOn": "typo3 => 8.7.0-9.5.99\n",
             "disableLocalization": false,
             "disableVersioning": false,
             "skipGenerateDocumentationTemplate": false,
             "sourceLanguage": "en",
             "state": "alpha",
-            "targetVersion": "8.7.0-8.7.99",
+            "targetVersion": "9.5.0-9.5.99",
             "version": "0.0.1"
         },
         "extensionKey": "templates_aide",
@@ -84,8 +83,8 @@
     },
     "wires": [],
     "log": {
-        "last_modified": "2018-11-30 10:40",
-        "extension_builder_version": "8.10.2",
-        "be_user": "Philipp Dieter (1)"
+        "last_modified": "2020-04-26 10:03",
+        "extension_builder_version": "9.10.2",
+        "be_user": " (1)"
     }
 }
