@@ -24,6 +24,10 @@ page {
     }
 }
 
+["{$asset.css.site}" == ""]
+    page.includeCSS.file01 >
+[global]
+
 pageContentelement = PAGE
 pageContentelement {
     typeNum = 5000

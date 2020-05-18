@@ -15,3 +15,5 @@ plugin.tx_templatesaide_dummy {
 }
 
 ## EXTENSION BUILDER DEFAULTS END TOKEN - Everything BEFORE this line is overwritten with the defaults of the extension builder
+
+<INCLUDE_TYPOSCRIPT: source="FILE:EXT:templates_aide/Resources/Private/TypoScript/constants.ts">
