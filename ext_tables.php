@@ -37,6 +37,12 @@ call_user_func(
                 'EXT:templates_aide/Resources/Public/Css/backend/production-stage';
         }
 
+        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::registerPageTSConfigFile(
+            'templates_aide',
+            'Resources/Private/PageTSConfig/default.tsconfig',
+            'Default Config'
+        );
+
         if (TYPO3_MODE == 'BE') {
             //$pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
             //    \TYPO3\CMS\Core\Page\PageRenderer::class
