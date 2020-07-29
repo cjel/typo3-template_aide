@@ -244,8 +244,14 @@ class ActionController extends BaseController
     protected function validateInput($input, $schema)
     {
         $validator = new Validator();
+        $input = array_filter($input, function($element) {
+            if (is_string($element) && !strlen($element)) {
+                return false;
+            }
+            return $element;
+        });
         $validationResult = $validator->dataValidation(
-            $input,
+            (object)$input,
             json_encode($schema),
             -1
         );
@@ -297,6 +303,21 @@ class ActionController extends BaseController
             }
         }
         return $validationResult->isValid();
+    }
+
+    /**
+     * returns plugin namespace to build js post request
+     *
+     * @return void
+     */
+    protected function getPluginNamespace()
+    {
+        $extensionName = $this->request->getControllerExtensionName();
+        $pluginName = $this->request->getPluginName();
+        return $this->extensionService->getPluginNamespace(
+            $extensionName,
+            $pluginName
+        );
     }
 
     /**
