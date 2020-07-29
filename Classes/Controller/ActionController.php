@@ -142,9 +142,9 @@ class ActionController extends BaseController
         $this->cacheManager = $this->objectManager->get(
             CacheManager::class
         );
-        $this->cache = $this->cacheManager->getCache(
-            'tobereplaced' //TODO: Replaceme
-        );
+        //$this->cache = $this->cacheManager->getCache(
+        //    'tobereplaced' //TODO: Replaceme
+        //);
         $this->logManager = $this->objectManager->get(
             LogManager::Class
         );
