@@ -164,9 +164,31 @@ class ActionController extends BaseController
      *
      * @return void
      */
-    protected function isPOST()
+    protected function isPost()
     {
         if ($this->request->getMethod() == 'POST'){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * shortcut to get to know if request is submittet via post and specific
+     * step is set
+     *
+     * @return void
+     */
+    protected function isPostStep(
+        $testStep = null
+    ) {
+        $step = null;
+        //if (array_key_exists('step', $this->arguments)){
+        //    $step = $
+        //}
+        if (
+            $this->request->getMethod() == 'POST'
+            && $step == $testStep
+        ){
             return true;
         }
         return false;
