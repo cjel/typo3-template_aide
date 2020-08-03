@@ -234,6 +234,29 @@ class ActionController extends BaseController
         );
     }
 
+    public function arrayRemoveEmptyStrings($array)
+    {
+        foreach ($array as $key => &$value) {
+            if (is_array($value)) {
+                $value = $this->arrayRemoveEmptyStrings($value);
+            } else {
+                if (is_string($value) && !strlen($value)) {
+                    unset($array[$key]);
+                }
+            }
+        }
+        unset($value);
+        return $array;
+    }
+
+    public static function arrayToObject($array) {
+        if (is_array($array)) {
+            return (object) array_map([__CLASS__, __METHOD__], $array);
+        } else {
+            return $array;
+        }
+    }
+
     /**
      * validate objects
      *
@@ -244,14 +267,10 @@ class ActionController extends BaseController
     protected function validateInput($input, $schema)
     {
         $validator = new Validator();
-        $input = array_filter($input, function($element) {
-            if (is_string($element) && !strlen($element)) {
-                return false;
-            }
-            return $element;
-        });
+        $input = $this->arrayRemoveEmptyStrings($input);
+        $input = $this->arrayToObject($input);
         $validationResult = $validator->dataValidation(
-            (object)$input,
+            $input,
             json_encode($schema),
             -1
         );
@@ -259,9 +278,11 @@ class ActionController extends BaseController
             $this->responseStatus = [400 => 'validationError'];
             foreach ($validationResult->getErrors() as $error){
                 $errorLabel = null;
-                $field = $error->dataPointer()[0];
+                $field = implode('.', $error->dataPointer());
                 if ($error->keyword() == 'required') {
-                    $field = ($error->keywordArgs()['missing']);
+                    $tmp = $error->dataPointer();
+                    array_push($tmp, $error->keywordArgs()['missing']);
+                    $field = implode('.', $tmp);
                 }
                 if ($error->keyword() == 'additionalProperties') {
                     continue;
@@ -287,18 +308,16 @@ class ActionController extends BaseController
                     }
                     $this->errorLabels[$field] = $errorLabel;
                 } else {
-                    foreach ($error->keywordArgs() as $arg) {
-                        $errorLabel = $this->getTranslation(
-                            'error.' . $arg . '.required'
-                        );
-                        if ($errorLabel == null) {
-                            $errorLabel = 'error.'
-                                . $field
-                                . '.'
-                                . $error->keyword();
-                        }
-                        $this->errorLabels[$arg] = $errorLabel;
+                    $errorLabel = $this->getTranslation(
+                        'error.' . $field . '.required'
+                    );
+                    if ($errorLabel == null) {
+                        $errorLabel = 'error.'
+                            . $field
+                            . '.'
+                            . $error->keyword();
                     }
+                    $this->errorLabels[$field] = $errorLabel;
                 }
             }
         }
