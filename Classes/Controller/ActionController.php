@@ -157,6 +157,7 @@ class ActionController extends BaseController
         $this->dataMapper = $this->objectManager->get(
             DataMapper::Class
         );
+        $this->arguments->addNewArgument('step', 'string', false, false);
     }
 
     /**
@@ -182,9 +183,9 @@ class ActionController extends BaseController
         $testStep = null
     ) {
         $step = null;
-        //if (array_key_exists('step', $this->arguments)){
-        //    $step = $
-        //}
+        if ($this->arguments->hasArgument('step')){
+            $step = $this->arguments->getArgument('step')->getValue();
+        }
         if (
             $this->request->getMethod() == 'POST'
             && $step == $testStep
