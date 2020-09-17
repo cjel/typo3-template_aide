@@ -21,6 +21,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as BaseController;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
+use TYPO3\CMS\Extbase\Property\PropertyMapper;
+use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -114,11 +116,49 @@ class ActionController extends BaseController
     protected $uriBuilder = null;
 
     /**
+     * propertyMappginConfigrtationBuolder
+     */
+    protected $propertyMapperConfigurationBuilder;
+
+    /**
      * @param \TYPO3\CMS\Extbase\Service\ExtensionService $extensionService
      */
     public function injectExtensionService(ExtensionService $extensionService)
     {
         $this->extensionService = $extensionService;
+    }
+
+    /**
+     * propertyMapper
+     *
+     * @var PropertyMapper
+     */
+    protected $propertyMapper;
+
+    /**
+     * @param
+     */
+    public function injectPropertyMapper(
+        PropertyMapper $propertyMapper
+    ) {
+        $this->propertyMapper = $propertyMapper;
+    }
+
+    /**
+     * propertyMappingConfigurationBuilder
+     *
+     * @var PropertyMappingConfigurationBuilder
+     */
+    protected $propertyMappingConfigurationBuilder;
+
+    /**
+     * @param
+     */
+    public function injectPropertyMappingConfigurationBuilder(
+        PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder
+    ) {
+        $this->propertyMappingConfigurationBuilder
+            = $propertyMappingConfigurationBuilder;
     }
 
     /*
@@ -158,6 +198,7 @@ class ActionController extends BaseController
             DataMapper::Class
         );
         $this->arguments->addNewArgument('step', 'string', false, false);
+        $this->arguments->addNewArgument('submit', 'string', false, false);
     }
 
     /**
@@ -180,17 +221,73 @@ class ActionController extends BaseController
      * @return void
      */
     protected function isPostStep(
-        $testStep = null
+        $testValue = null
     ) {
-        $step = null;
-        if ($this->arguments->hasArgument('step')){
-            $step = $this->arguments->getArgument('step')->getValue();
+        return $this->isPostAndArgumentMatches('step', $testValue);
+    }
+
+    /**
+     *
+     */
+    protected function isPostSubmit(
+        $testValue = null
+    ) {
+        return $this->isPostAndArgumentMatches('submit', $testValue);
+    }
+
+    /**
+     *
+     */
+    protected function isPostAndArgumentMatches(
+        $argument,
+        $testValue
+    ) {
+        $value = null;
+        if ($this->arguments->hasArgument($argument)){
+            $value = $this->arguments->getArgument($argument)->getValue();
         }
         if (
             $this->request->getMethod() == 'POST'
-            && $step == $testStep
+            && $value == $testValue
         ){
             return true;
+        }
+        return false;
+    }
+
+    protected function einTest(
+        $actions = []
+    ) {
+
+    }
+
+    /**
+     *
+     */
+    protected function getPostSubmit()
+    {
+        return explode('#', $this->getPostValue('submit'))[0];
+    }
+
+    /**
+     *
+     */
+    protected function getPostSubmitItem()
+    {
+        return explode('#', $this->getPostValue('submit'))[1];
+    }
+
+    /**
+     *
+     */
+    protected function getPostValue(
+        $argument
+    ) {
+        if ($this->arguments->hasArgument($argument)){
+            //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
+            //    $this->arguments->getArgument($argument)->getValue(), null, 3
+            //);
+            return $this->arguments->getArgument($argument)->getValue();
         }
         return false;
     }
@@ -362,6 +459,103 @@ class ActionController extends BaseController
             'object' => $object,
             'namespace' => $this->getPluginNamespace(),
         ];
+    }
+
+    /**
+     * The hash service class to use
+     *
+     * @var \TYPO3\CMS\Extbase\Security\Cryptography\HashService
+     */
+    protected $hashService;
+
+    /**
+     * @param \TYPO3\CMS\Extbase\Security\Cryptography\HashService $hashService
+     */
+    public function injectHashService(\TYPO3\CMS\Extbase\Security\Cryptography\HashService $hashService)
+    {
+        $this->hashService = $hashService;
+    }
+
+    /**
+     * get property mapper config
+     *
+     * @return void
+     */
+    protected function getPropertyMappingConfiguration($attribute)
+    {
+        $propertyMappingConfiguration = $this
+            ->propertyMappingConfigurationBuilder->build();
+        $this->initializePropertyMappingConfigurationFromRequest(
+            $this->request,
+            $propertyMappingConfiguration,
+            $attribute
+        );
+        return $propertyMappingConfiguration;
+    }
+
+    /**
+     * Initialize the property mapping configuration in $controllerArguments if
+     * the trusted properties are set inside the request.
+     *
+     * @param \TYPO3\CMS\Extbase\Mvc\Request $request
+     * @param \TYPO3\CMS\Extbase\Mvc\Controller\Arguments $controllerArguments
+     * @throws BadRequestException
+     */
+    public function initializePropertyMappingConfigurationFromRequest(\TYPO3\CMS\Extbase\Mvc\Request $request, $propertyMappingConfiguration, $propertyNameTest)
+    {
+        $trustedPropertiesToken = $request->getInternalArgument('__trustedProperties');
+        if (!is_string($trustedPropertiesToken)) {
+            return;
+        }
+
+        try {
+            $serializedTrustedProperties = $this->hashService->validateAndStripHmac($trustedPropertiesToken);
+        } catch (InvalidHashException | InvalidArgumentForHashGenerationException $e) {
+            throw new BadRequestException('The HMAC of the form could not be validated.', 1581862822);
+        }
+        $trustedProperties = unserialize($serializedTrustedProperties, ['allowed_classes' => false]);
+        foreach ($trustedProperties as $propertyName => $propertyConfiguration) {
+
+            //if (!$controllerArguments->hasArgument($propertyName)) {
+            //    continue;
+            //}
+            if ($propertyName != $propertyNameTest) {
+                continue;
+            }
+            //$propertyMappingConfiguration = $controllerArguments->getArgument($propertyName)->getPropertyMappingConfiguration();
+            $this->modifyPropertyMappingConfiguration($propertyConfiguration, $propertyMappingConfiguration);
+        }
+    }
+
+    /**
+     * Modify the passed $propertyMappingConfiguration according to the $propertyConfiguration which
+     * has been generated by Fluid. In detail, if the $propertyConfiguration contains
+     * an __identity field, we allow modification of objects; else we allow creation.
+     *
+     * All other properties are specified as allowed properties.
+     *
+     * @param array $propertyConfiguration
+     * @param \TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration $propertyMappingConfiguration
+     */
+    protected function modifyPropertyMappingConfiguration($propertyConfiguration, \TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration $propertyMappingConfiguration)
+    {
+        if (!is_array($propertyConfiguration)) {
+            return;
+        }
+
+        if (isset($propertyConfiguration['__identity'])) {
+            $propertyMappingConfiguration->setTypeConverterOption(\TYPO3\CMS\Extbase\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\CMS\Extbase\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, true);
+            unset($propertyConfiguration['__identity']);
+        } else {
+            $propertyMappingConfiguration->setTypeConverterOption(\TYPO3\CMS\Extbase\Property\TypeConverter\PersistentObjectConverter::class, \TYPO3\CMS\Extbase\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+        }
+
+        foreach ($propertyConfiguration as $innerKey => $innerValue) {
+            if (is_array($innerValue)) {
+                $this->modifyPropertyMappingConfiguration($innerValue, $propertyMappingConfiguration->forProperty($innerKey));
+            }
+            $propertyMappingConfiguration->allowProperties($innerKey);
+        }
     }
 
     /**
