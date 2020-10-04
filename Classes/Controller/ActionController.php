@@ -289,9 +289,6 @@ class ActionController extends BaseController
         $argument
     ) {
         if ($this->arguments->hasArgument($argument)){
-            //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
-            //    $this->arguments->getArgument($argument)->getValue(), null, 3
-            //);
             return $this->arguments->getArgument($argument)->getValue();
         }
         return false;
