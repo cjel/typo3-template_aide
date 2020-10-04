@@ -91,6 +91,11 @@ class ActionController extends BaseController
     protected $redirect = null;
 
     /**
+     * is valid
+     */
+    protected $isValid = true;
+
+    /**
      * errors
      */
     protected $errors = [];
@@ -366,6 +371,15 @@ class ActionController extends BaseController
     {
         $validator = new Validator();
         $input = $this->arrayRemoveEmptyStrings($input);
+        //@todo make optional when usiing rest api
+        //array_walk_recursive(
+        //    $input,
+        //    function (&$value) {
+        //        if (filter_var($value, FILTER_VALIDATE_INT)) {
+        //            $value = (int)$value;
+        //        }
+        //    }
+        //);
         $input = $this->arrayToObject($input);
         $validationResult = $validator->dataValidation(
             $input,
@@ -373,6 +387,7 @@ class ActionController extends BaseController
             -1
         );
         if (!$validationResult->isValid()) {
+            $this->isValid = false;
             $this->responseStatus = [400 => 'validationError'];
             foreach ($validationResult->getErrors() as $error){
                 $errorLabel = null;
@@ -607,6 +622,7 @@ class ActionController extends BaseController
             return json_encode($result);
         }
         $result = array_merge($result, ['cid' => $this->contentObjectUid]);
+        $result = array_merge($result, ['isValid' => $this->isValid]);
         if (!empty($this->ajaxEnv)) {
             $result = array_merge(
                 $result,
