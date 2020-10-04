@@ -18,6 +18,7 @@ use \Opis\JsonSchema\{
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as BaseController;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
@@ -204,6 +205,42 @@ class ActionController extends BaseController
         );
         $this->arguments->addNewArgument('step', 'string', false, false);
         $this->arguments->addNewArgument('submit', 'string', false, false);
+    }
+
+    /**
+     * shortcut
+     *
+     * @return void
+     */
+    protected function getExtensionKey()
+    {
+        return $this->request->getControllerExtensionKey();
+    }
+
+    /**
+     * shortcut function to recieve typoscript
+     *
+     * @return array
+     */
+    protected function getPluginTyposcript()
+    {
+        return $this->configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS,
+            str_replace('_', '', $this->getExtensionKey),
+            $this->request->getPluginName()
+        );
+    }
+
+    /**
+     * shortcut function to recieve typoscript
+     *
+     * @return array
+     */
+    protected function getTyposcript()
+    {
+        return $this->configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS
+        );
     }
 
     /**
