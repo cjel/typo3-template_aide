@@ -87,6 +87,11 @@ class ActionController extends BaseController
     protected $responseStatus = 200;
 
     /**
+     * component mode, used in frontend
+     */
+    protected $componentMode = 'default';
+
+    /**
      * redirect url
      */
     protected $redirect = null;
@@ -327,6 +332,18 @@ class ActionController extends BaseController
     ) {
         if ($this->arguments->hasArgument($argument)){
             return $this->arguments->getArgument($argument)->getValue();
+        }
+        return false;
+    }
+
+    /**
+     *
+     */
+    protected function getGetValue(
+        $argument
+    ) {
+        if (GeneralUtility::_GP($argument)) {
+            return GeneralUtility::_GP($argument);
         }
         return false;
     }
@@ -655,8 +672,12 @@ class ActionController extends BaseController
             }
             return json_encode($result);
         }
-        $result = array_merge($result, ['cid' => $this->contentObjectUid]);
-        $result = array_merge($result, ['isValid' => $this->isValid]);
+        $result = array_merge(
+            $result,
+            ['cid'           => $this->contentObjectUid],
+            ['isValid'       => $this->isValid],
+            ['componentMode' => $this->componentMode]
+        );
         if (!empty($this->ajaxEnv)) {
             $result = array_merge(
                 $result,
