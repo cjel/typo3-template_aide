@@ -662,10 +662,9 @@ class ActionController extends BaseController
             } else {
                 $this->response->setStatus($this->responseStatus);
             }
-            $this->response->setHeader(
-                'Content-type',
-                'application/json'
-            );
+            if ($this->pageType == $this->ajaxPageType) {
+                $GLOBALS['TSFE']->setContentType('application/json');
+            }
             unset($result['data']);
             if ($this->redirect) {
                 $result['redirect'] = $this->redirect;
