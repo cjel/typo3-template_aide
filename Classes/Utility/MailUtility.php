@@ -19,6 +19,7 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Service\ImageService;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3\CMS\Fluid\View\TemplatePaths;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /**
  *
@@ -49,15 +50,31 @@ class MailUtility
             $templateRootPaths = $templatePaths->getTemplateRootPaths();
         }
         if (!$templateNameHtml) {
-            $templateNameHtml = 'Mailing/DefaultHtml';
+            $templateNameHtml = 'Mails/DefaultHtml';
         }
         if (!$templateNameText) {
-            $templateNameText = 'Mailing/DefaultText';
+            $templateNameText = 'Mails/DefaultText';
         }
-        $htmlView = GeneralUtility::makeInstance(StandaloneView::class);
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        $configurationManager = $objectManager->get(
+            ConfigurationManagerInterface::class
+        );
+        $typoScript = $configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
+        );
+        $settings =
+            (array)$typoScript['module.']['tx_templatesaide.']['settings.'];
+        $settings = GeneralUtility::removeDotsFromTS($settings);
+        $htmlView = $objectManager->get(StandaloneView::class);
+        $htmlView->getTemplatePaths()->fillDefaultsByPackageName(
+            'templates_aide'
+        );
         $htmlView->setTemplateRootPaths($templateRootPaths);
         $htmlView->setTemplate($templateNameHtml);
-        $textView = GeneralUtility::makeInstance(StandaloneView::class);
+        $textView = $objectManager->get(StandaloneView::class);
+        $textView->getTemplatePaths()->fillDefaultsByPackageName(
+            'templates_aide'
+        );
         $textView->setTemplateRootPaths($templateRootPaths);
         $textView->setTemplate($templateNameText);
         $mail = GeneralUtility::makeInstance(MailMessage::class);
@@ -172,7 +189,7 @@ class MailUtility
         }
         $textView->assign('content', $bodydataText);
         $htmlView->assign('content', $bodydataHtml);
-        $domain = GeneralUtility::locationHeaderUrl('/');
+        $domain = $settings['mailDomain'];
         $htmlView->assign('domain', $domain);
         $textBody = $textView->render();
         $htmlBody = $htmlView->render();
