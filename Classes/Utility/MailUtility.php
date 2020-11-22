@@ -40,15 +40,9 @@ class MailUtility
         $sender,
         $subject,
         $data,
-        $templateRootPaths = null,
         $templateNameHtml = null,
         $templateNameText = null
     ) {
-        if (!$templateRootPaths) {
-            $templatePaths = new TemplatePaths();
-            $templatePaths->fillDefaultsByPackageName('templates_aide');
-            $templateRootPaths = $templatePaths->getTemplateRootPaths();
-        }
         if (!$templateNameHtml) {
             $templateNameHtml = 'Mails/DefaultHtml';
         }
@@ -69,13 +63,11 @@ class MailUtility
         $htmlView->getTemplatePaths()->fillDefaultsByPackageName(
             'templates_aide'
         );
-        $htmlView->setTemplateRootPaths($templateRootPaths);
         $htmlView->setTemplate($templateNameHtml);
         $textView = $objectManager->get(StandaloneView::class);
         $textView->getTemplatePaths()->fillDefaultsByPackageName(
             'templates_aide'
         );
-        $textView->setTemplateRootPaths($templateRootPaths);
         $textView->setTemplate($templateNameText);
         $mail = GeneralUtility::makeInstance(MailMessage::class);
         $mail->setFrom($sender);
