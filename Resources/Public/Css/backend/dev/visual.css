@@ -12,3 +12,17 @@
 	#151515
     )
 }
+
+.yui-layout-unit-left .inputEx-ListField-childContainer div div,
+#left div.inputEx-Field {
+  width: 100%;
+}
+
+#propertiesForm div.inputEx-Group .inputEx-StringField-wrapper input[type="text"],
+#propertiesForm div.inputEx-Group .inputEx-StringField-wrapper textarea {
+  width: calc(100% - 10px);
+}
+
+#propertiesForm div.inputEx-Group .inputEx-StringField-wrapper textarea {
+  height: 150px;
+}

@@ -25,12 +25,12 @@ class HeaderDataViewHelper extends AbstractViewHelper
         }
         switch ($type){
             case 'tracking':
-                if(GeneralUtility::getApplicationContext()->isProduction()){
+                //if(GeneralUtility::getApplicationContext()->isProduction()){
                     $GLOBALS['TSFE']->additionalHeaderData[] = $data;
-                } else {
-                    $GLOBALS['TSFE']->additionalHeaderData[]
-                        = '<meta name="placeholder" content="tracking" />';
-                }
+                //} else {
+                //    $GLOBALS['TSFE']->additionalHeaderData[]
+                //        = '<meta name="placeholder" content="tracking" />';
+                //}
                 break;
             case 'title':
                 $GLOBALS['TSFE']->additionalHeaderData[]
