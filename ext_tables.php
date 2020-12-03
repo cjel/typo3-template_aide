@@ -20,6 +20,9 @@ call_user_func(
 );
 ## EXTENSION BUILDER DEFAULTS END TOKEN - Everything BEFORE this line is overwritten with the defaults of the extension builder
 
+use Cjel\TemplatesAide\Property\TypeConverter\Double2Converter;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+
 call_user_func(
     function()
     {
@@ -36,6 +39,15 @@ call_user_func(
             $GLOBALS['TBE_STYLES']['skins']['backend']['stylesheetDirectories']['dev'] =
                 'EXT:templates_aide/Resources/Public/Css/backend/production-stage';
         }
+
+        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::registerPageTSConfigFile(
+            'templates_aide',
+            'Resources/Private/PageTSConfig/default.tsconfig',
+            'Default Config'
+        );
+
+
+        ExtensionUtility::registerTypeConverter(Double2Converter::class);
 
         if (TYPO3_MODE == 'BE') {
             //$pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(

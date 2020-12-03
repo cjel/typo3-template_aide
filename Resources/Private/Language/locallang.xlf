@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2020-04-26T22:03:44Z" product-name="templates_aide">
-		<header/>
+	<file source-language="en" datatype="plaintext" original="messages" date="2020-07-16T21:32:04Z">
+		<header>
+			<generator>LFEditor</generator>
+		</header>
 		<body>
+			<trans-unit id="default">
+				<source><![CDATA[Default]]></source>
+			</trans-unit>
+			<trans-unit id="homepage">
+				<source><![CDATA[Homepage]]></source>
+			</trans-unit>
+			<trans-unit id="subpage">
+				<source><![CDATA[Subpage]]></source>
+			</trans-unit>
 			<trans-unit id="tx_templatesaide_domain_model_dummy">
-				<source>Dummy</source>
+				<source><![CDATA[Dummy]]></source>
 			</trans-unit>
 		</body>
 	</file>

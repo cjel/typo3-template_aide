@@ -1,8 +1,7 @@
+# legacy
+
 lib.rootpid = TEXT
 lib.rootpid.data = leveluid : 0
-
-lib.pidRoot = TEXT
-lib.pidRoot.data = leveluid : 0
 
 lib.currentLevel = TEXT
 lib.currentLevel.data = level:1
@@ -10,8 +9,16 @@ lib.currentLevel.data = level:1
 lib.currentPid = TEXT
 lib.currentPid.data = TSFE:id
 
+# legacy end
+
+lib.pidRoot = TEXT
+lib.pidRoot.data = leveluid : 0
+
 lib.pidCurrent = TEXT
 lib.pidCurrent.data = TSFE:id
+
+lib.level = TEXT
+lib.level.data = level:1
 
 lib.gpvar = COA
 lib.gpvar {

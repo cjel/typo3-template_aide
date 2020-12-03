@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2020-07-16T21:32:04Z">
+		<header>
+			<generator>LFEditor</generator>
+		</header>
+		<body>
+			<trans-unit id="default" approved="yes">
+				<source><![CDATA[Default]]></source>
+				<target><![CDATA[Standard]]></target>
+			</trans-unit>
+			<trans-unit id="homepage" approved="yes">
+				<source><![CDATA[Homepage]]></source>
+				<target><![CDATA[Startseite]]></target>
+			</trans-unit>
+			<trans-unit id="subpage" approved="yes">
+				<source><![CDATA[Subpage]]></source>
+				<target><![CDATA[Unterseite]]></target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

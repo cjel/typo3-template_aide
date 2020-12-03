@@ -1,0 +1,20 @@
+<v:variable.set name="br">
+</v:variable.set>
+<f:for
+  each="{content}"
+  as="row"
+  key="rowKey"
+  iteration="rowI"
+><v:format.trim>
+    <v:condition.type.isArray value="{row.data}">
+        <f:then>{row.data.0}: {row.data.1}</f:then>
+        <f:else><f:if condition="{row.type} == 'headline' || {row.type} == 'text'"><f:if condition="{row.type} == 'headline'">
+            <f:then>= {row.data} =</f:then>
+            <f:else>{row.data}</f:else>
+        </f:if></f:if></f:else>
+    </v:condition.type.isArray>
+</v:format.trim><f:if condition="{content.{rowI.cycle}.data}">{br}<f:if condition="{v:condition.type.isArray(value='{content.{rowI.index}.data}', then: '1')} && {v:condition.type.isArray(value='{content.{rowI.cycle}.data}', then: '1')}"><f:else>{br}</f:else></f:if></f:if><f:if condition="{row.type} == 'buttons'">
+  <f:then>{br}{br}{row.targets.0.1}:{br}{row.targets.0.0}{br}{br}{row.targets.1.1}:{br}{row.targets.1.0}</f:then>
+</f:if><f:if condition="{row.type} == 'button'">
+  <f:then>{br}{br}{row.targets.0.1}:{br}{row.targets.0.0}</f:then>
+</f:if></f:for>

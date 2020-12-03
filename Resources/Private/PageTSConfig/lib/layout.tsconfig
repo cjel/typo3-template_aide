@@ -1,0 +1,29 @@
+mod {
+    web_layout {
+        BackendLayouts {
+            default {
+                title = LLL:EXT:templates_aide/Resources/Private/Language/locallang.xlf:default
+                config {
+                    backend_layout {
+                        colCount = 1
+                        rowCount = 1
+                        rows {
+                            1 {
+                                columns {
+                                    1 {
+                                        name = LLL:EXT:templates_aide/Resources/Private/Language/locallang.xlf:default
+                                        colPos = 0
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            homepage < .default
+            homepage.title = LLL:EXT:templates_aide/Resources/Private/Language/locallang.xlf:homepage
+            subpage < .default
+            subpage.title = LLL:EXT:templates_aide/Resources/Private/Language/locallang.xlf:subpage
+        }
+    }
+}
