@@ -357,7 +357,7 @@ class ActionController extends BaseController
     {
         return LocalizationUtility::translate(
             $key,
-            'tobereplaced', //TODO: Replace me
+            'fes_garbagedumps', //TODO: Replace me
             $arguments
         );
     }
