@@ -55,6 +55,9 @@ class ApiUtility
         }
         $result = [];
         foreach ($rows as $row) {
+            if (!$row) {
+                continue;
+            }
             $rowClass = (new \ReflectionClass($row))->getShortName();
             $methods = get_class_methods($row);
             $rowResult = [];
