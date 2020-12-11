@@ -357,7 +357,9 @@ class ActionController extends BaseController
     {
         return LocalizationUtility::translate(
             $key,
-            'tobereplaced', //TODO: Replace me
+            GeneralUtility::camelCaseToLowerCaseUnderscored(
+                $this->extensionName
+            ),
             $arguments
         );
     }
