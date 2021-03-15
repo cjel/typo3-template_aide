@@ -12,9 +12,7 @@ namespace Cjel\TemplatesAide\Controller;
  *
  ***/
 
-use \Opis\JsonSchema\{
-    Validator, ValidationResult, ValidationError, Schema
-};
+use Cjel\TemplatesAide\Traits\ValidationTrait;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -29,6 +27,10 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class ActionController extends BaseController
 {
+
+    use ValidationTrait {
+        validateAgainstSchema as traitValidateAgainstSchema;
+    }
 
     /*
      * page type
@@ -95,11 +97,6 @@ class ActionController extends BaseController
      * redirect url
      */
     protected $redirect = null;
-
-    /**
-     * is valid
-     */
-    protected $isValid = true;
 
     /**
      * errors
@@ -390,104 +387,91 @@ class ActionController extends BaseController
         );
     }
 
-    public function arrayRemoveEmptyStrings($array)
-    {
-        foreach ($array as $key => &$value) {
-            if (is_array($value)) {
-                $value = $this->arrayRemoveEmptyStrings($value);
-            } else {
-                if (is_string($value) && !strlen($value)) {
-                    unset($array[$key]);
-                }
-            }
-        }
-        unset($value);
-        return $array;
-    }
 
-    public static function arrayToObject($array) {
-        if (is_array($array)) {
-            return (object) array_map([__CLASS__, __METHOD__], $array);
-        } else {
-            return $array;
-        }
-    }
 
     /**
-     * validate objects
+     * legacy function to prevent beaking old code
      *
-     * @param $input
-     * @param schema
-     * @return void
+     * @deprecated
      */
     protected function validateInput($input, $schema)
     {
-        $validator = new Validator();
-        $input = $this->arrayRemoveEmptyStrings($input);
-        //@todo make optional when usiing rest api
-        //array_walk_recursive(
-        //    $input,
-        //    function (&$value) {
-        //        if (filter_var($value, FILTER_VALIDATE_INT)) {
-        //            $value = (int)$value;
-        //        }
-        //    }
-        //);
-        $input = $this->arrayToObject($input);
-        $validationResult = $validator->dataValidation(
+        return $this->validateAgainstSchema($input, $schema, true);
+    }
+
+    /**
+     * validate input and translate error messages
+     */
+    protected function validateAgainstSchema(
+        $input, $schema, $translate = false
+    ) {
+        $validationResult = $this->traitValidateAgainstSchema(
             $input,
-            json_encode($schema),
-            -1
+            $schema
         );
         if (!$validationResult->isValid()) {
-            $this->isValid = false;
-            $this->responseStatus = [400 => 'validationError'];
-            foreach ($validationResult->getErrors() as $error){
-                $errorLabel = null;
-                $field = implode('.', $error->dataPointer());
-                if ($error->keyword() == 'required') {
-                    $tmp = $error->dataPointer();
-                    array_push($tmp, $error->keywordArgs()['missing']);
-                    $field = implode('.', $tmp);
-                }
-                if ($error->keyword() == 'additionalProperties') {
-                    continue;
-                }
-                $this->errors[$field] = [
-                    'keyword' => $error->keyword(),
-                    'details' => $error->keywordArgs()
-                ];
-                if ($error->keyword() != 'required') {
-                    $errorLabel = $this->getTranslation(
-                        'error.' . $field . '.' . $error->keyword()
-                    );
-                    //if ($errorLabel == null) {
-                    //    $errorLabel = $this->getTranslation(
-                    //        'error.' . $field . '.required'
-                    //    );
-                    //}
-                    if ($errorLabel == null) {
-                        $errorLabel = 'error.'
-                            . $field
-                            . '.'
-                            . $error->keyword();
-                    }
-                    $this->errorLabels[$field] = $errorLabel;
-                } else {
-                    $errorLabel = $this->getTranslation(
-                        'error.' . $field . '.required'
-                    );
-                    if ($errorLabel == null) {
-                        $errorLabel = 'error.'
-                            . $field
-                            . '.'
-                            . $error->keyword();
-                    }
-                    $this->errorLabels[$field] = $errorLabel;
-                }
+            //foreach ($validationResult->getErrors() as $error){
+            //    $field = implode('.', $error->dataPointer());
+            //    if ($error->keyword() == 'required') {
+            //        $tmp = $error->dataPointer();
+            //        array_push($tmp, $error->keywordArgs()['missing']);
+            //        $field = implode('.', $tmp);
+            //    }
+            //    if ($error->keyword() == 'additionalProperties') {
+            //        continue;
+            //    }
+            //    $this->errors[$field] = [
+            //        'keyword' => $error->keyword(),
+            //        'details' => $error->keywordArgs()
+            //    ];
+            //}
+            if ($translate) {
+                $this->translateErrorMessages($validationResult);
             }
         }
         return $validationResult->isValid();
+    }
+
+    /**
+     * translate error messages to user readable strings
+     */
+    protected function translateErrorMessages($validationResult)
+    {
+        foreach ($validationResult->getErrors() as $error){
+            $errorLabel = null;
+            $field = implode('.', $error->dataPointer());
+            if ($error->keyword() == 'required') {
+                $tmp = $error->dataPointer();
+                array_push($tmp, $error->keywordArgs()['missing']);
+                $field = implode('.', $tmp);
+            }
+            if ($error->keyword() == 'additionalProperties') {
+                continue;
+            }
+            if ($error->keyword() != 'required') {
+                $errorLabel = $this->getTranslation(
+                    'error.' . $field . '.' . $error->keyword()
+                );
+                if ($errorLabel == null) {
+                    $errorLabel = 'error.'
+                        . $field
+                        . '.'
+                        . $error->keyword();
+                }
+                $this->errorLabels[$field] = $errorLabel;
+            } else {
+                $errorLabel = $this->getTranslation(
+                    'error.' . $field . '.required'
+                );
+                if ($errorLabel == null) {
+                    $errorLabel = 'error.'
+                        . $field
+                        . '.'
+                        . $error->keyword();
+                }
+                $this->errorLabels[$field] = $errorLabel;
+            }
+        }
     }
 
     /**
