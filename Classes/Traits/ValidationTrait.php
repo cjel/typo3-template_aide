@@ -15,6 +15,7 @@ namespace Cjel\TemplatesAide\Traits;
 use \Opis\JsonSchema\{
     Validator, ValidationResult, ValidationError, Schema
 };
+use Cjel\TemplatesAide\Utility\ArrayUtility;
 
 /**
  * ValidationTrait
@@ -47,7 +48,7 @@ trait ValidationTrait
     protected function validateAgainstSchema($input, $schema)
     {
         $validator = new Validator();
-        $input = $this->arrayRemoveEmptyStrings($input);
+        $input = ArrayUtility::removeEmptyStrings($input);
         //@TODO make optional when usiing rest api
         //array_walk_recursive(
         //    $input,
@@ -57,7 +58,7 @@ trait ValidationTrait
         //        }
         //    }
         //);
-        $input = $this->arrayToObject($input);
+        $input = ArrayUtility::toObject($input);
         $validationResult = $validator->dataValidation(
             $input,
             json_encode($schema),
@@ -88,35 +89,6 @@ trait ValidationTrait
             }
         }
         return $validationResult;
-    }
-
-    /**
-     * remove empty strings
-     */
-    public function arrayRemoveEmptyStrings($array)
-    {
-        foreach ($array as $key => &$value) {
-            if (is_array($value)) {
-                $value = $this->arrayRemoveEmptyStrings($value);
-            } else {
-                if (is_string($value) && !strlen($value)) {
-                    unset($array[$key]);
-                }
-            }
-        }
-        unset($value);
-        return $array;
-    }
-
-    /**
-     * function arrayTObject
-     */
-    public static function arrayToObject($array) {
-        if (is_array($array)) {
-            return (object) array_map([__CLASS__, __METHOD__], $array);
-        } else {
-            return $array;
-        }
     }
 
 }
