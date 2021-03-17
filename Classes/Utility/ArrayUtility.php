@@ -35,7 +35,7 @@ class ArrayUtility
     {
         foreach ($array as $key => &$value) {
             if (is_array($value)) {
-                $value = [__CLASS__, __METHOD__]($value);
+                $value = self::removeEmptyStrings($value);
             } else {
                 if (is_string($value) && !strlen($value)) {
                     unset($array[$key]);
