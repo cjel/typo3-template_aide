@@ -67,6 +67,9 @@ trait ValidationTrait
         if (!$validationResult->isValid()) {
             $this->isValid = false;
             $this->responseStatus = [400 => 'validationError'];
+            //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
+            //    $validationResult->getErrors(), false, 9, true
+            //);
             foreach ($validationResult->getErrors() as $error){
                 $field = implode('.', $error->dataPointer());
                 if ($error->keyword() == 'required') {
@@ -76,7 +79,9 @@ trait ValidationTrait
                 }
                 if ($error->keyword() == 'additionalProperties') {
                     foreach ($error->subErrors() as $subError) {
-                        $this->errors[$subError->dataPointer()[0]] = [
+                        $this->errors[
+                            implode('.', $subError->dataPointer())
+                        ] = [
                             'keyword' => 'superfluos',
                         ];
                     }
