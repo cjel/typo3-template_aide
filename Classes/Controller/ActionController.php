@@ -354,9 +354,7 @@ class ActionController extends BaseController
     {
         return LocalizationUtility::translate(
             $key,
-            GeneralUtility::camelCaseToLowerCaseUnderscored(
-                $this->extensionName
-            ),
+            $this->getExtensionKey(),
             $arguments
         );
     }
