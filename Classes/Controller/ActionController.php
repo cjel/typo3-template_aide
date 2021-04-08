@@ -352,11 +352,23 @@ class ActionController extends BaseController
      */
     protected function getTranslation($key, $arguments = null)
     {
-        return LocalizationUtility::translate(
+        $translation = LocalizationUtility::translate(
             $key,
             $this->getExtensionKey(),
             $arguments
         );
+        if ($translation) {
+            return $translation;
+        }
+        $translation = LocalizationUtility::translate(
+            $key,
+            'site_templates',
+            $arguments
+        );
+        if ($translation) {
+            return $translation;
+        }
+        return null;
     }
 
     /**
