@@ -40,6 +40,9 @@ call_user_func(
                 'EXT:templates_aide/Resources/Public/Css/backend/production-stage';
         }
 
+        $GLOBALS['TBE_STYLES']['skins']['backend']['stylesheetDirectories']['default'] =
+            'EXT:templates_aide/Resources/Public/Css/backend/default';
+
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::registerPageTSConfigFile(
             'templates_aide',
             'Resources/Private/PageTSConfig/default.tsconfig',
