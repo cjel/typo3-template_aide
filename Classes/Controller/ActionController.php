@@ -124,6 +124,11 @@ class ActionController extends BaseController
     protected $uriBuilder = null;
 
     /**
+     * general config
+     */
+    protected $config = [];
+
+    /**
      * propertyMappginConfigrtationBuolder
      */
     protected $propertyMapperConfigurationBuilder;
@@ -176,6 +181,9 @@ class ActionController extends BaseController
      */
     public function initializeAction()
     {
+        $this->config = GeneralUtility::removeDotsFromTS(
+            $GLOBALS['TSFE']->config['config']
+        );
         $this->pageType = GeneralUtility::_GP('type');
         if (!is_numeric($this->pageType)) {
             $this->pageType = 0;
@@ -207,6 +215,16 @@ class ActionController extends BaseController
         );
         $this->arguments->addNewArgument('step', 'string', false, false);
         $this->arguments->addNewArgument('submit', 'string', false, false);
+    }
+
+    /**
+     * returns an instance of uribuilder
+     */
+    public function getUriBuilder()
+    {
+        return $this->objectManager->get(
+            UriBuilder::class
+        );
     }
 
     /**
@@ -352,11 +370,23 @@ class ActionController extends BaseController
      */
     protected function getTranslation($key, $arguments = null)
     {
-        return LocalizationUtility::translate(
+        $translation = LocalizationUtility::translate(
             $key,
             $this->getExtensionKey(),
             $arguments
         );
+        if ($translation) {
+            return $translation;
+        }
+        $translation = LocalizationUtility::translate(
+            $key,
+            'site_templates',
+            $arguments
+        );
+        if ($translation) {
+            return $translation;
+        }
+        return null;
     }
 
     /**
@@ -374,15 +404,21 @@ class ActionController extends BaseController
     /**
      * function to add validation error manually in the controller
      */
-    protected function addValidationError($field, $keyword) {
+    protected function addValidationError(
+        $field, $keyword, $overwrite = false
+    ) {
         $this->responseStatus = [400 => 'validationError'];
-        $this->errors[$field] = [
-            'keyword' => $keyword,
-        ];
-        $this->errorLabels[$field] = $this->getErrorLabel(
-            $field,
-            $keyword
-        );
+        if (!array_key_exists($field, $this->errors)
+            || $overwrite == true
+        ) {
+            $this->errors[$field] = [
+                'keyword' => $keyword,
+            ];
+            $this->errorLabels[$field] = $this->getErrorLabel(
+                $field,
+                $keyword
+            );
+        }
     }
 
 

@@ -1,0 +1,26 @@
+--- webroot/typo3conf/ext/extension_builder/Classes/Service/FileGenerator.php	2020-06-08 22:07:03.000000000 +0200
++++ webroot/typo3conf/ext/extension_builder/Classes/Service/FileGenerator.php	2020-08-12 01:39:57.931302902 +0200
+@@ -202,10 +202,6 @@
+             GeneralUtility::mkdir($this->extensionDirectory);
+         }
+ 
+-        $this->generateGitIgnore();
+-
+-        $this->generateGitAttributes();
+-
+         $this->generateEditorConfig();
+ 
+         $this->generateComposerJson();
+@@ -240,7 +236,11 @@
+             $this->generateDocumentationFiles();
+         }
+ 
+-        $this->generateEmptyGitRepository();
++        $extensionSettings = $extension->getSettings();
++        if ($extensionSettings['overwriteSettings']['.git'] ?? false) {
++            $this->generateEmptyGitRepository();
++            $this->generateGitIgnore();
++        }
+     }
+ 
+     protected function generateYamlSettingsFile()

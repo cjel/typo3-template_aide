@@ -57,3 +57,36 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1549297828] = [
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['c'] = [];
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['c'][]
   = 'Cjel\TemplatesAide\ViewHelpers';
+
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['n'] = [];
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['n'][]
+  = 'GeorgRinger\News\ViewHelpers';
+
+call_user_func(
+  function()
+  {
+    $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['script_enabled'] =
+      \Cjel\TemplatesAide\Controller\EIDController::class
+      . '::scriptEnabled';
+    if (isset($_SERVER['REQUEST_URI'])) {
+      $uriParts = explode('/', $_SERVER['REQUEST_URI']);
+      if ($uriParts[1] === 'script' && $uriParts[2] === 'enabled') {
+        $_GET['eID'] = 'script_enabled';
+      }
+    }
+    $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['script_disabled'] =
+      \Cjel\TemplatesAide\Controller\EIDController::class
+      . '::scriptDisabled';
+    if (isset($_SERVER['REQUEST_URI'])) {
+      $uriParts = explode('/', $_SERVER['REQUEST_URI']);
+      if ($uriParts[1] === 'script' && $uriParts[2] === 'disabled') {
+        $_GET['eID'] = 'script_disabled';
+      }
+    }
+    //$GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['script_enable'] =
+    //    \Cjel\TemplatesAide\Controller\EIDController::class
+    //        . '::scriptEnable';
+
+
+  }
+);
