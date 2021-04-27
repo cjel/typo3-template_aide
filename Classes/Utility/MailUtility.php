@@ -41,7 +41,8 @@ class MailUtility
         $subject,
         $data,
         $templateNameHtml = null,
-        $templateNameText = null
+        $templateNameText = null,
+        $templatePaths = null
     ) {
         if (!$templateNameHtml) {
             $templateNameHtml = 'Mails/DefaultHtml';
@@ -60,14 +61,23 @@ class MailUtility
             (array)$typoScript['module.']['tx_templatesaide.']['settings.'];
         $settings = GeneralUtility::removeDotsFromTS($settings);
         $htmlView = $objectManager->get(StandaloneView::class);
-        $htmlView->getTemplatePaths()->fillDefaultsByPackageName(
-            'templates_aide'
-        );
         $htmlView->setTemplate($templateNameHtml);
         $textView = $objectManager->get(StandaloneView::class);
-        $textView->getTemplatePaths()->fillDefaultsByPackageName(
-            'templates_aide'
-        );
+        if ($templatePaths) {
+            $htmlView->setTemplateRootPaths(
+                $templatePaths->getTemplateRootPaths()
+            );
+            $textView->setTemplateRootPaths(
+                $templatePaths->getTemplateRootPaths()
+            );
+        } else {
+            $htmlView->getTemplatePaths()->fillDefaultsByPackageName(
+                'templates_aide'
+            );
+            $textView->getTemplatePaths()->fillDefaultsByPackageName(
+                'templates_aide'
+            );
+        }
         $textView->setTemplate($templateNameText);
         $mail = GeneralUtility::makeInstance(MailMessage::class);
         $mail->setFrom($sender);
