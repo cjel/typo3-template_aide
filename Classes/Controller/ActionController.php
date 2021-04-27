@@ -13,6 +13,7 @@ namespace Cjel\TemplatesAide\Controller;
  ***/
 
 use Cjel\TemplatesAide\Traits\ValidationTrait;
+use Cjel\TemplatesAide\Utility\ApiUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -172,6 +173,22 @@ class ActionController extends BaseController
     ) {
         $this->propertyMappingConfigurationBuilder
             = $propertyMappingConfigurationBuilder;
+    }
+
+    /**
+     * ApiUtility
+     *
+     * @var ApiUtility
+     */
+    protected $apiUtility;
+
+    /**
+     * @param
+     */
+    public function injectApiUtility(
+        ApiUtility $apiUtility
+    ) {
+        $this->apiUtility = $apiUtility;
     }
 
     /*
