@@ -8,10 +8,12 @@
 ><v:format.trim>
     <v:condition.type.isArray value="{row.data}">
         <f:then>{row.data.0}: {row.data.1}</f:then>
-        <f:else><f:if condition="{row.type} == 'headline' || {row.type} == 'text'"><f:if condition="{row.type} == 'headline'">
-            <f:then>= {row.data} =</f:then>
-            <f:else>{row.data}</f:else>
-        </f:if></f:if></f:else>
+        <f:else><f:if condition="{v:condition.string.contains(haystack: '{row.type}', needle: 'headline', then: '1')} || {row.type} == 'text'"><f:switch expression="{row.type}">
+          <f:case value="headline">= {row.data} =</f:case>
+          <f:case value="headline2">== {row.data} ==</f:case>
+          <f:case value="headline3">=== {row.data} ===</f:case>
+          <f:defaultCase>{row.data}</f:defaultCase>
+        </f:switch></f:if></f:else>
     </v:condition.type.isArray>
 </v:format.trim><f:if condition="{content.{rowI.cycle}.data}">{br}<f:if condition="{v:condition.type.isArray(value='{content.{rowI.index}.data}', then: '1')} && {v:condition.type.isArray(value='{content.{rowI.cycle}.data}', then: '1')}"><f:else>{br}</f:else></f:if></f:if><f:if condition="{row.type} == 'buttons'">
   <f:then>{br}{br}{row.targets.0.1}:{br}{row.targets.0.0}{br}{br}{row.targets.1.1}:{br}{row.targets.1.0}</f:then>
