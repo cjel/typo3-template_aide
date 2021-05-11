@@ -87,6 +87,7 @@ class MailUtility
         foreach ($data as $row) {
             switch($row['type']) {
                 case 'text':
+                case 'textbold':
                 case 'headline':
                     $htmlRow = $row;
                     $htmlRow['data'] = preg_replace_callback(
