@@ -130,6 +130,7 @@ class MailUtility
         foreach ($data as $row) {
             switch($row['type']) {
                 case 'text':
+                case 'textbold':
                 case 'headline':
                 case 'headline2':
                 case 'headline3':
