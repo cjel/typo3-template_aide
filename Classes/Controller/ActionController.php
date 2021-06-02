@@ -437,6 +437,7 @@ class ActionController extends BaseController
     protected function addValidationError(
         $field, $keyword, $overwrite = false
     ) {
+        $this->isValid = false;
         $this->responseStatus = [400 => 'validationError'];
         if (!array_key_exists($field, $this->errors)
             || $overwrite == true
