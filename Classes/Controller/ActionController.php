@@ -407,6 +407,19 @@ class ActionController extends BaseController
     }
 
     /**
+     *
+     */
+    protected function getDomainModelString($object)
+    {
+        $extensionName = $this->request->getControllerExtensionName();
+        $reflection = new \ReflectionClass($object);
+        return 'tx_' .
+            strtolower($this->request->getControllerExtensionName()) .
+            '_domain_model_' .
+            strtolower($reflection->getShortName());
+    }
+
+    /**
      * gets error label based on field and keyword, uses predefined extensionkey
      */
     protected function getErrorLabel($field, $keyword) {
