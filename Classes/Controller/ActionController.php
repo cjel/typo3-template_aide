@@ -100,6 +100,11 @@ class ActionController extends BaseController
     protected $redirect = null;
 
     /**
+     * if to reload
+     */
+    protected $reload = null;
+
+    /**
      * errors
      */
     protected $errors = [];
@@ -719,6 +724,9 @@ class ActionController extends BaseController
             unset($result['data']);
             if ($this->redirect) {
                 $result['redirect'] = $this->redirect;
+            }
+            if ($this->reload) {
+                $result['reload'] = true;
             }
             return json_encode($result);
         }
