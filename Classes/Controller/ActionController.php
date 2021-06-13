@@ -584,6 +584,7 @@ class ActionController extends BaseController
             ->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)
+            ->setAddQueryString(true)
             ->setTargetPageType($this->ajaxPageType)
             ->setArguments(['cid' => $this->contentObjectUid])
             ->uriFor($this->request->getControllerActionName());
@@ -697,9 +698,12 @@ class ActionController extends BaseController
      * @param array $result
      * @return void
      */
-    protected function returnFunction($result = [], $errorStatus = null)
-    {
-        $this->setAjaxEnv();
+    protected function returnFunction(
+        $result      = [],
+        $errorStatus = null,
+        $object      = 'data'
+    ) {
+        $this->setAjaxEnv($object);
         if ($result == null) {
             $result = [];
         }

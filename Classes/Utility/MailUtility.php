@@ -138,7 +138,6 @@ class MailUtility
                     $htmlRow['data'] = preg_replace_callback(
                         '/\[.*\]/mU',
                         function($matches) {
-
                             foreach ($matches as $match) {
                                 return preg_replace_callback(
                                     '/\[(\S*)\s(.*)\]/mU',
