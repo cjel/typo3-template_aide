@@ -21,6 +21,7 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as BaseController;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
+use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
@@ -247,6 +248,16 @@ class ActionController extends BaseController
         return $this->objectManager->get(
             UriBuilder::class
         );
+    }
+
+    /**
+     * returns an instance of uribuilder
+     */
+    public function persistAll()
+    {
+        ($this->objectManager->get(
+            PersistenceManager::class
+        ))->persistAll();
     }
 
     /**
