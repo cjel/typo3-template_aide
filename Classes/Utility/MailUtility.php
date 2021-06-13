@@ -240,6 +240,13 @@ class MailUtility
         $htmlView->assign('domain', $domain);
         $textBody = $textView->render();
         $htmlBody = $htmlView->render();
+        if ($domain) {
+            $htmlBody = str_replace(
+                'src="/assets',
+                'src="' . $domain . '/assets',
+                $htmlBody
+            );
+        }
         $mail->setBody($textBody);
         $mail->addPart($htmlBody, 'text/html');
         $recipients = explode(
