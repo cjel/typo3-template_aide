@@ -13,9 +13,18 @@ class DotsToBracketsViewHelper extends AbstractViewHelper
         RenderingContextInterface $renderingContext
     ) {
         $parts = explode('.', $renderChildrenClosure());
-        $_  = '[\'';
-        $_ .= implode('\'][\'', $parts);
-        $_ .= '\']';
+        $_  = '';
+        foreach ($parts as $part) {
+            $_ .= '[';
+            if (substr($part, 0, 1) === '#') {
+                $_ .= substr($part, 1);
+            } else {
+                $_ .= '\'';
+                $_ .= $part;
+                $_ .= '\'';
+            }
+            $_ .= ']';
+        }
         return $_;
     }
 }
