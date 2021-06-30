@@ -6,7 +6,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
-class DbTableViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class DbTableViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper {
 
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
@@ -22,8 +22,8 @@ class DbTableViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
         parent::initializeArguments();
         $this->registerArgument('table', 'string', '', true);
         $this->registerArgument('fields', 'array', '', true, ['*']);
-        $this->registerArgument('where', 'array', '', true);
-        $this->registerArgument('orderBy', 'array', '', true);
+        $this->registerArgument('where', 'array', '', false);
+        $this->registerArgument('orderBy', 'array', '', false);
     }
 
     /**
