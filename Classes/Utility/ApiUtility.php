@@ -93,15 +93,18 @@ class ApiUtility
                 ) {
                     $rowResult[$attributeName] = $methodResult;
                 }
-                if (array_key_exists($rowClass, $mapping)
-                    && array_key_exists($attributeName, $mapping[$rowClass])
-                ) {
-                    $mappingFunction = $mapping[$rowClass][$attributeName];
-                    $rowResult[$attributeName] = $mappingFunction(
-                        $methodResult,
+            }
+            // ---
+            if (array_key_exists($rowClass, $mapping)) {
+                foreach ($mapping[$rowClass] as $attributeName => $function) {
+                    $rowResult[$attributeName] = $function(
+                        $rowResult[$attributeName],
                         $row
                     );
                 }
+            }
+            // ---
+            foreach ($propertieResults as $attributeName => $methodResult) {
                 if (gettype($methodResult) == 'object'
                     && get_class($methodResult) == 'DateTime'
                 ) {
