@@ -4,27 +4,46 @@ namespace Cjel\TemplatesAide\ViewHelpers;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 class DbTableViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
     /**
-      * As this ViewHelper renders HTML, the output must not be escaped.
-      *
-      * @var bool
-      */
+     * As this ViewHelper renders HTML, the output must not be escaped.
+     *
+     * @var bool
+     */
     protected $escapeOutput = false;
 
     /**
-     * @param string $table The filename
-     * @param string $fields The filename
-     * @param string $where
-     * @param string $orderBy
+     * Initialize arguments
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('table', 'string', '', true);
+        $this->registerArgument('fields', 'array', '', true, ['*']);
+        $this->registerArgument('where', 'array', '', true);
+        $this->registerArgument('orderBy', 'array', '', true);
+    }
+
+    /**
+     * @param string $table
+     * @param array $fields
+     * @param array $where
+     * @param array $orderBy
      * @return string HTML Content
      */
-    public function render($table, $fields = ['*'], $where = [], $orderBy = []){
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+        $table   = $arguments['table'];
+        $fields  = $arguments['fields'];
+        $where   = $arguments['where'];
+        $orderBy = $arguments['orderBy'];
 
-
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('pages')->createQueryBuilder();
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table)->createQueryBuilder();
 
         $whereExpressions = [];
         if (!empty($where)) {
