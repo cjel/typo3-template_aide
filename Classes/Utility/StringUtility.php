@@ -64,4 +64,11 @@ class StringUtility
         }
         return implode('', $pieces);
     }
+
+    public static function checkAndfixUtf8($string){
+        if (!mb_detect_encoding($string, 'UTF-8', true)) {
+            $string = mb_convert_encoding($string , 'UTF-8', 'ASCII');
+        }
+        return $string;
+    }
 }
