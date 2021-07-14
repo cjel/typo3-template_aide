@@ -2,3 +2,11 @@
   border: 1px solid #eee;
   height: auto !important;
 }
+textarea.formengine-textarea {
+  max-height: unset;
+  width: 100%;
+  resize: vertical;
+}
+.form-control-wrap {
+  max-width: unset !important;
+}

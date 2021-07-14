@@ -21,6 +21,7 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as BaseController;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
+use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
@@ -98,6 +99,11 @@ class ActionController extends BaseController
      * redirect url
      */
     protected $redirect = null;
+
+    /**
+     * if to reload
+     */
+    protected $reload = null;
 
     /**
      * errors
@@ -242,6 +248,16 @@ class ActionController extends BaseController
         return $this->objectManager->get(
             UriBuilder::class
         );
+    }
+
+    /**
+     * returns an instance of uribuilder
+     */
+    public function persistAll()
+    {
+        ($this->objectManager->get(
+            PersistenceManager::class
+        ))->persistAll();
     }
 
     /**
@@ -407,6 +423,19 @@ class ActionController extends BaseController
     }
 
     /**
+     *
+     */
+    protected function getDomainModelString($object)
+    {
+        $extensionName = $this->request->getControllerExtensionName();
+        $reflection = new \ReflectionClass($object);
+        return 'tx_' .
+            strtolower($this->request->getControllerExtensionName()) .
+            '_domain_model_' .
+            strtolower($reflection->getShortName());
+    }
+
+    /**
      * gets error label based on field and keyword, uses predefined extensionkey
      */
     protected function getErrorLabel($field, $keyword) {
@@ -424,6 +453,7 @@ class ActionController extends BaseController
     protected function addValidationError(
         $field, $keyword, $overwrite = false
     ) {
+        $this->isValid = false;
         $this->responseStatus = [400 => 'validationError'];
         if (!array_key_exists($field, $this->errors)
             || $overwrite == true
@@ -554,6 +584,7 @@ class ActionController extends BaseController
             ->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)
+            ->setAddQueryString(true)
             ->setTargetPageType($this->ajaxPageType)
             ->setArguments(['cid' => $this->contentObjectUid])
             ->uriFor($this->request->getControllerActionName());
@@ -667,9 +698,12 @@ class ActionController extends BaseController
      * @param array $result
      * @return void
      */
-    protected function returnFunction($result = [], $errorStatus = null)
-    {
-        $this->setAjaxEnv();
+    protected function returnFunction(
+        $result      = [],
+        $errorStatus = null,
+        $object      = 'data'
+    ) {
+        $this->setAjaxEnv($object);
         if ($result == null) {
             $result = [];
         }
@@ -705,6 +739,9 @@ class ActionController extends BaseController
             unset($result['data']);
             if ($this->redirect) {
                 $result['redirect'] = $this->redirect;
+            }
+            if ($this->reload) {
+                $result['reload'] = true;
             }
             return json_encode($result);
         }

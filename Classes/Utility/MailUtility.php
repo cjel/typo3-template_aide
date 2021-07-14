@@ -27,6 +27,49 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 class MailUtility
 {
     /**
+     * Parse text with a simple "template system" to be used as data for
+     * sendMail function
+     *
+     * @param string $text
+     * @param array $markers
+     * @return array
+     */
+    public static function parseContentTemplate(
+        $text,
+        $markers = []
+    ) {
+        $textParts = explode("\r\n\r\n", $text);
+        $result = [];
+        foreach ($textParts as $textPart) {
+            $type = 'text';
+            if (substr($textPart, 0, 2) === '# ') {
+                $type = 'headline';
+                $textPart = substr($textPart, 2);
+            }
+            if (substr($textPart, 0, 3) === '## ') {
+                $type = 'headline2';
+                $textPart = substr($textPart, 3);
+            }
+            if (substr($textPart, 0, 4) === '### ') {
+                $type = 'headline3';
+                $textPart = substr($textPart, 4);
+            }
+            foreach ($markers as $markerName => $markerContent) {
+                $textPart = str_replace(
+                    '###' . $markerName . '###',
+                    $markerContent,
+                    $textPart
+                );
+            }
+            $result[] = [
+                'type' => $type,
+                'data' => $textPart,
+            ];
+        }
+        return $result;
+    }
+
+    /**
      * tages maildata, builds html and text mails an decides where to send them
      * allows to intercept sender for testing
      *
@@ -89,11 +132,12 @@ class MailUtility
                 case 'text':
                 case 'textbold':
                 case 'headline':
+                case 'headline2':
+                case 'headline3':
                     $htmlRow = $row;
                     $htmlRow['data'] = preg_replace_callback(
                         '/\[.*\]/mU',
                         function($matches) {
-
                             foreach ($matches as $match) {
                                 return preg_replace_callback(
                                     '/\[(\S*)\s(.*)\]/mU',
@@ -196,6 +240,13 @@ class MailUtility
         $htmlView->assign('domain', $domain);
         $textBody = $textView->render();
         $htmlBody = $htmlView->render();
+        if ($domain) {
+            $htmlBody = str_replace(
+                'src="/assets',
+                'src="' . $domain . '/assets',
+                $htmlBody
+            );
+        }
         $mail->setBody($textBody);
         $mail->addPart($htmlBody, 'text/html');
         $recipients = explode(

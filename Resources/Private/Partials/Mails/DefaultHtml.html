@@ -3,7 +3,7 @@
     <f:then>
     </f:then>
     <f:else>
-      <f:if condition="{row.type} == 'headline' || {row.type} == 'text'">
+      <f:if condition="{v:condition.string.contains(haystack: '{row.type}', needle: 'headline', then: '1')} || {row.type} == 'text'">
         <!--[if mso | IE]>
           <table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:640px;" width="640" >
             <tr>
@@ -13,7 +13,7 @@
           <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
             <tbody>
               <tr>
-                <td style="direction:ltr;font-size:0px;padding:20px;text-align:center;">
+                <td style="direction:ltr;font-size:0px;padding:0 20px;text-align:center;">
                   <!--[if mso | IE]>
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                       <tr>
@@ -27,15 +27,21 @@
                             <table border="0" cellpadding="0" cellspacing="0" role="presentation" style width="100%">
                               <tr>
                                 <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Arial, sans-serif;font-size:16px;line-height:1;text-align:left;color:#000000;">
-                                    <f:if condition="{row.type} == 'headline'">
-                                      <f:then>
+                                  <div style="font-family:Arial, sans-serif;font-size:16px;line-height:1.4;text-align:left;color:#000000;">
+                                    <f:switch expression="{row.type}">
+                                      <f:case value="headline">
+                                        <h1>{row.data -> f:format.nl2br() -> f:format.raw()}</h1>
+                                      </f:case>
+                                      <f:case value="headline2">
                                         <h2>{row.data -> f:format.nl2br() -> f:format.raw()}</h2>
-                                      </f:then>
-                                      <f:else>
+                                      </f:case>
+                                      <f:case value="headline3">
+                                        <h3>{row.data -> f:format.nl2br() -> f:format.raw()}</h3>
+                                      </f:case>
+                                      <f:defaultCase>
                                         <p>{row.data -> f:format.nl2br() -> f:format.raw()}</p>
-                                      </f:else>
-                                    </f:if>
+                                      </f:defaultCase>
+                                    </f:switch>
                                   </div>
                                 </td>
                               </tr>
