@@ -8,6 +8,7 @@ if (isset($_SERVER['HTTP_COOKIE'])) {
             setcookie($name, '', time()  - 3600);
             setcookie($name, '', time()  - 3600, '/');
             setcookie($name, '', time()  - 3600, '/', '.'.$_SERVER['HTTP_HOST']);
+            setcookie($name, '', time()  - 3600, '/', '.local.dvl');
         }
     }
 }
