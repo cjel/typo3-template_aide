@@ -15,6 +15,8 @@ namespace Cjel\TemplatesAide\Utility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Service\ImageService;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 
 /**
  *
@@ -105,14 +107,15 @@ class ApiUtility
             }
             // ---
             foreach ($propertieResults as $attributeName => $methodResult) {
+
+
                 if (gettype($methodResult) == 'object'
                     && get_class($methodResult) == 'DateTime'
                 ) {
                     $rowResult[$attributeName] = $methodResult->format('c');
                 }
                 if (gettype($methodResult) == 'object'
-                    && get_class($methodResult)
-                        == 'TYPO3\CMS\Extbase\Persistence\ObjectStorage'
+                    && get_class($methodResult) == ObjectStorage::class
                 ) {
                     if ($rootRowClass == null) {
                         $nextLevelClass = $rowClass;
@@ -126,12 +129,18 @@ class ApiUtility
                         $nextLevelClass
                     );
                 }
-                //@todo: build unversal solution without fixed class name
-                if (gettype($methodResult) == 'object'
-                    && get_class($methodResult)
-                        == 'Glanzstueck\FesCustomerportal\Domain\Model'
-                            .  '\FrontendUser'
+
+                if (
+                    gettype($methodResult) == 'object'
+                    &&
+                    !in_array(get_class($methodResult), [
+                        LazyObjectStorage::class,
+                        ObjectStorage::class,
+                    ])
+                    &&
+                    count(explode('\\', get_class($methodResult))) > 1
                 ) {
+
                     if ($rootRowClass == null) {
                         $nextLevelClass = $rowClass;
                     } else {
@@ -143,11 +152,11 @@ class ApiUtility
                         $mapping,
                         $nextLevelClass
                     )[0];
+                    $rowResult[$attributeName . 'Uid']
+                        = $rowResult[$attributeName]['uid'];
                 }
                 if (gettype($methodResult) == 'object'
-                    && get_class($methodResult)
-                        == 'TYPO3\CMS\Extbase\Persistence\Generic'
-                            . '\LazyObjectStorage'
+                    && get_class($methodResult) == LazyObjectStorage::class
                 ) {
                     $rowResult[$attributeName] = [];
                     foreach ($methodResult as $object) {
