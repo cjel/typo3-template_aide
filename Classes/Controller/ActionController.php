@@ -545,6 +545,14 @@ class ActionController extends BaseController
                     'error.' . $field . '.required'
                 );
                 if ($errorLabel == null) {
+                    $fieldLabel = $this->getTranslation(
+                        'field.' . $field
+                    );
+                    $errorLabel = $this->getTranslation(
+                        'error.required', [$fieldLabel]
+                    );
+                }
+                if ($errorLabel == null) {
                     $errorLabel = 'error.'
                         . $field
                         . '.'
