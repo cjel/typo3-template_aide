@@ -28,13 +28,20 @@ class ObjectUtility
      * @return void
      */
     public static function fromArray(
-        &$object, $data, $storageMapping = []
+        &$object, $data, $storageMapping = [], $allowedFields = []
     ) {
         $objectManager = GeneralUtility::makeInstance(
             ObjectManager::class
         );
         $reflectionClass = new \ReflectionClass(get_class($object));
         foreach ($data as $property => $value) {
+            if (
+                count($allowedFields)
+                &&
+                !in_array($property, $allowedFields)
+            ) {
+                continue;
+            }
             $methodName = 'set' . ucfirst($property);
             if (!$reflectionClass->hasMethod($methodName)) {
                 continue;
