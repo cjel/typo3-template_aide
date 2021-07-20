@@ -28,7 +28,11 @@ class ObjectUtility
      * @return void
      */
     public static function fromArray(
-        &$object, $data, $storageMapping = [], $allowedFields = []
+        &$object,
+        $data,
+        $storageMapping  = [],
+        $allowedFields   = [],
+        $relationMapping = []
     ) {
         $objectManager = GeneralUtility::makeInstance(
             ObjectManager::class
@@ -43,8 +47,15 @@ class ObjectUtility
                 continue;
             }
             $methodName = 'set' . ucfirst($property);
-            if (!$reflectionClass->hasMethod($methodName)) {
+            if (
+                !$reflectionClass->hasMethod($methodName)
+                &&
+                substr($property, -3) != 'Uid'
+            ) {
                 continue;
+            }
+            if (substr($property, -3) === 'Uid') {
+                $methodName = 'set' . ucfirst(substr($property, 0, -3));
             }
             $method = $reflectionClass->getMethod($methodName);
             $params = $method->getParameters();
@@ -74,18 +85,29 @@ class ObjectUtility
                     $object->_setProperty($property, $storageUpdated);
                 }
             } else {
-                if ($methodType == null) {
+                if (
+                    $methodType == null
+                    &&
+                    substr($property, -3) != 'Uid'
+                ) {
                     $value = StringUtility::checkAndfixUtf8($value);
                     $object->_setProperty($property, $value);
-                } else {
+                } elseif (
+                    substr($property, -3) === 'Uid'
+                ) {
                     $typeParts = explode('\\', (string)$methodType);
                     $typeParts[count($typeParts) - 2] = 'Repository';
                     $repositoryClass = join('\\', $typeParts);
                     $repositoryClass .= 'Repository';
                     if (class_exists($repositoryClass)) {
                         $repository = $objectManager->get($repositoryClass);
-                        $relatedObject = $repository->findByUid($value);
-                        $object->_setProperty($property, $relatedObject);
+                        $relatedObject = $repository->findByUid(
+                            $data[$property]
+                        );
+                        $object->_setProperty(
+                            substr($property, 0, -3),
+                            $relatedObject
+                        );
                     }
                 }
             }
