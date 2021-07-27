@@ -45,6 +45,12 @@ class SiteConfigUtility
         foreach ($pathParts as $key) {
             $current = &$current[$key];
         }
+        if (is_array($current)
+            && array_key_exists('value', $current)
+            && count($current) === 1
+        ) {
+            $current = $current['value'];
+        }
         return $current;
     }
 }
