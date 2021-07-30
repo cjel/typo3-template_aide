@@ -109,6 +109,22 @@ class ObjectUtility
                             $relatedObject
                         );
                     }
+                } elseif (
+                    \DateTime::createFromFormat(\DateTime::ISO8601, $value)
+                        !== false
+                ) {
+                    $object->_setProperty(
+                        $property,
+                        \DateTime::createFromFormat(\DateTime::ISO8601, $value)
+                    );
+                } elseif (
+                    \DateTime::createFromFormat('Y-m-d\TH:i:s', $value)
+                        !== false
+                ) {
+                    $object->_setProperty(
+                        $property,
+                        \DateTime::createFromFormat('Y-m-d\TH:i:s', $value)
+                    );
                 }
             }
         }
