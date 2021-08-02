@@ -43,6 +43,34 @@ class TcaUtility
     }
 
     /**
+     * fills object from array
+     *
+     * @return void
+     */
+    public static function configureSelectFromArray(
+        &$tca, $column, $element, $options, $extensionKey = null
+    ) {
+        $items = [];
+        foreach ($options as $option) {
+            $translationKey = "option.$element.$column.$option";
+            $translation = self::getTranslation(
+                $translationKey,
+                $extensionKey
+            );
+            if ($translation) {
+                $items[] = [$translation, $option];
+            } else {
+                $items[] = [$translationKey, $option];
+            }
+        }
+        $tca['columns'][$column]['config']['type']       = 'select';
+        $tca['columns'][$column]['config']['renderType'] = 'selectSingle';
+        $tca['columns'][$column]['config']['size']       = 6;
+        $tca['columns'][$column]['config']['appearance'] = [];
+        $tca['columns'][$column]['config']['items']      = $items;
+    }
+
+    /**
      * shortcut to get translation
      *
      * @return void
