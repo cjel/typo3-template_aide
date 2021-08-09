@@ -23,6 +23,8 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Plugin\AbstractPlugin;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
+use TYPO3\CMS\Extbase\Reflection\ClassSchema;
+use TYPO3\CMS\Extbase\Reflection\ReflectionService;
 
 /**
  * AbstractEIDController
@@ -94,6 +96,9 @@ class AbstractEIDController
         $this->configurationManager = $this->objectManager->get(
             ConfigurationManagerInterface::class
         );
+        $this->apiUtility = $this->objectManager->get(
+            \Cjel\TemplatesAide\Utility\ApiUtility::class
+        );
         $this->configurationManager->setConfiguration(array());
         $frameworkConfiguration = $this->configurationManager->getConfiguration(
             ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
@@ -114,6 +119,20 @@ class AbstractEIDController
         $this->importLogger = $this->logManager->getLogger(
             'importLogger'
         );
+        $this->reflectionService = GeneralUtility::makeInstance(
+            ReflectionService::class, GeneralUtility::makeInstance(
+                CacheManager::class
+            )
+        );
+        $classInfo = $this->reflectionService->getClassSchema(
+            get_class($this)
+        );
+        foreach ($classInfo->getInjectMethods() as $method => $className) {
+            $class = $this->objectManager->get(
+                $className
+            );
+            $this->{$method}($class);
+        }
     }
 
     /**
