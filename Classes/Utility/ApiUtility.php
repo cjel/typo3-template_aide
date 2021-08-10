@@ -91,6 +91,7 @@ class ApiUtility
                 if (gettype($methodResult) == 'string'
                     || gettype($methodResult) == 'integer'
                     || gettype($methodResult) == 'boolean'
+                    || gettype($methodResult) == 'double'
                 ) {
                     $rowResult[$attributeName] = $methodResult;
                 }
