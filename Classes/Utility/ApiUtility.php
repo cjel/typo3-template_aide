@@ -213,7 +213,13 @@ class ApiUtility
         return $result;
     }
 
-    private function filereferenceToApi($object) {
+    public function filereferenceToApi($object) {
+        $this->objectManager = GeneralUtility::makeInstance(
+            ObjectManager::class
+        );
+        $this->imageService = $this->objectManager->get(
+            imageService::class
+        );
         $httpHost = GeneralUtility::getIndpEnv('HTTP_HOST');
         $requestHost = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
         $publicUrl = $object->getPublicUrl();
