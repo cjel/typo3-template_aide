@@ -204,9 +204,11 @@ class ActionController extends BaseController
      */
     public function initializeAction()
     {
-        $this->config = GeneralUtility::removeDotsFromTS(
-            $GLOBALS['TSFE']->config['config']
-        );
+        if ($GLOBALS['TSFE']->config['config']) {
+            $this->config = GeneralUtility::removeDotsFromTS(
+                $GLOBALS['TSFE']->config['config']
+            );
+        }
         $this->pageType = GeneralUtility::_GP('type');
         if (!is_numeric($this->pageType)) {
             $this->pageType = 0;
