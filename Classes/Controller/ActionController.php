@@ -24,6 +24,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
+use TYPO3\CMS\Extbase\Service\EnvironmentService;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -149,6 +150,22 @@ class ActionController extends BaseController
     }
 
     /**
+     * environmentService
+     *
+     * @var EnvironmentService
+     */
+    protected $environmentService;
+
+    /**
+     * @param
+     */
+    public function injectEnvironmentService(
+        EnvironmentService $environmentService
+    ) {
+        $this->environmentService = $environmentService;
+    }
+
+    /**
      * propertyMapper
      *
      * @var PropertyMapper
@@ -253,7 +270,7 @@ class ActionController extends BaseController
     }
 
     /**
-     * returns an instance of uribuilder
+     *
      */
     public function persistAll()
     {
@@ -596,11 +613,14 @@ class ActionController extends BaseController
             ->setCreateAbsoluteUri(true)
             ->setAddQueryString(true)
             ->setTargetPageType($this->ajaxPageType)
-            ->setArguments(['cid' => $this->contentObjectUid])
+            ->setArguments([
+                'cid'  => $this->contentObjectUid,
+                'type' => $this->ajaxPageType,
+            ])
             ->uriFor($this->request->getControllerActionName());
         $this->ajaxEnv = [
-            'uri' => $uri,
-            'object' => $object,
+            'uri'       => $uri,
+            'object'    => $object,
             'namespace' => $this->getPluginNamespace(),
         ];
     }
@@ -744,7 +764,11 @@ class ActionController extends BaseController
                 $this->response->setStatus($this->responseStatus);
             }
             if ($this->pageType == $this->ajaxPageType) {
-                $GLOBALS['TSFE']->setContentType('application/json');
+                if ($this->environmentService->isEnvironmentInBackendMode()) {
+                    header('Content-Type: application/json');
+                } else {
+                    $GLOBALS['TSFE']->setContentType('application/json');
+                }
             }
             unset($result['data']);
             if ($this->redirect) {
@@ -769,5 +793,4 @@ class ActionController extends BaseController
         }
         $this->view->assignMultiple($result);
     }
-
 }

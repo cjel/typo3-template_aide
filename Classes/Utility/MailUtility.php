@@ -36,9 +36,10 @@ class MailUtility
      */
     public static function parseContentTemplate(
         $text,
-        $markers = []
+        $markers = [],
+        $lineEnd = "\r\n"
     ) {
-        $textParts = explode("\r\n\r\n", $text);
+        $textParts = explode($lineEnd . $lineEnd, $text);
         $result = [];
         foreach ($textParts as $textPart) {
             $type = 'text';
@@ -54,6 +55,22 @@ class MailUtility
                 $type = 'headline3';
                 $textPart = substr($textPart, 4);
             }
+            if (substr($textPart, 0, 2) === '- ') {
+                $type = 'list';
+                $textPart = substr($textPart, 2);
+            }
+            if (substr($textPart, 0, 2) === '| ') {
+                $type = 'table';
+                $textPart = substr($textPart, 2);
+            }
+            if (substr($textPart, 0, 3) === '|| ') {
+                $type = 'tableLayout';
+                $textPart = substr($textPart, 3);
+            }
+            if (substr($textPart, 0, 9) === '%subject ') {
+                $type = 'subject';
+                $textPart = substr($textPart, 9);
+            }
             foreach ($markers as $markerName => $markerContent) {
                 $textPart = str_replace(
                     '###' . $markerName . '###',
@@ -61,10 +78,40 @@ class MailUtility
                     $textPart
                 );
             }
-            $result[] = [
-                'type' => $type,
-                'data' => $textPart,
-            ];
+            switch($type) {
+            case 'table':
+            case 'tableLayout':
+                if (
+                    $result[count($result) - 1]['type'] == $type
+                    && count($result[count($result) - 1]['data']) == 1
+                ) {
+                    $result[count($result) - 1]['data'][] = $textPart;
+                } else {
+                    $result[] = [
+                        'type' => $type,
+                        'data' => [$textPart],
+                    ];
+                }
+                break;
+            case 'list':
+                if (
+                    $result[count($result) - 1]['type'] == 'list'
+                ) {
+                    $result[count($result) - 1]['data'][] = $textPart;
+                } else {
+                    $result[] = [
+                        'type' => 'list',
+                        'data' => [$textPart],
+                    ];
+                }
+                break;
+            default:
+                $result[] = [
+                    'type' => $type,
+                    'data' => $textPart,
+                ];
+                break;
+            }
         }
         return $result;
     }
@@ -107,11 +154,21 @@ class MailUtility
         $htmlView->setTemplate($templateNameHtml);
         $textView = $objectManager->get(StandaloneView::class);
         if ($templatePaths) {
+            $partialRootPaths = $htmlView->getPartialRootPaths();
+            $partialRootPaths[] = GeneralUtility::getFileAbsFileName(
+                'EXT:templates_aide/Resources/Private/Partials/'
+            );
             $htmlView->setTemplateRootPaths(
                 $templatePaths->getTemplateRootPaths()
             );
+            $htmlView->setPartialRootPaths(
+                $partialRootPaths
+            );
             $textView->setTemplateRootPaths(
                 $templatePaths->getTemplateRootPaths()
+            );
+            $textView->setPartialRootPaths(
+                $partialRootPaths
             );
         } else {
             $htmlView->getTemplatePaths()->fillDefaultsByPackageName(
@@ -130,6 +187,9 @@ class MailUtility
         foreach ($data as $row) {
             switch($row['type']) {
                 case 'text':
+                case 'table':
+                case 'tableLayout':
+                case 'list':
                 case 'textbold':
                 case 'headline':
                 case 'headline2':

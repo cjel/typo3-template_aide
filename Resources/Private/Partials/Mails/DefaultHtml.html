@@ -1,23 +1,34 @@
+<f:if condition="{width}">
+  <f:else>
+    <f:variable name="width" value="640" />
+  </f:else>
+</f:if>
+<f:if condition="{padding}">
+  <f:else>
+    <f:variable name="padding" value="20" />
+  </f:else>
+</f:if>
+<f:variable name="widthPadded" value="{width - padding - padding}" />
+<f:variable name="widthTableColumn" value="{widthPadded / 2}" />
+
 <f:for each="{content}" as="row" key="rowKey" iteration="rowI" >
   <v:condition.type.isArray value="{row.data}">
-    <f:then>
-    </f:then>
     <f:else>
       <f:if condition="{v:condition.string.contains(haystack: '{row.type}', needle: 'headline', then: '1')} || {row.type} == 'text'">
         <!--[if mso | IE]>
-          <table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:640px;" width="640" >
+          <table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:{width}px;" width="{width}" >
             <tr>
               <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
         <![endif]-->
-        <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:640px;">
+        <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:{width}px;">
           <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
             <tbody>
               <tr>
-                <td style="direction:ltr;font-size:0px;padding:0 20px;text-align:center;">
+                <td style="direction:ltr;font-size:0px;padding:0 {padding}px;text-align:center;">
                   <!--[if mso | IE]>
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td class="" style="vertical-align:top;width:600px;" >
+                        <td class="" style="vertical-align:top;width:{widthPadded};" >
                   <![endif]-->
                   <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
                     <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
@@ -68,5 +79,136 @@
         <![endif]-->
       </f:if>
     </f:else>
+    <f:then>
+      <f:comment>Data is array, can be table or list</f:comment>
+      <f:switch expression="{row.type}">
+        <f:case value="table">
+          <f:variable name="type" value="table" />
+        </f:case>
+        <f:case value="tableLayout">
+          <f:variable name="type" value="table" />
+        </f:case>
+        <f:defaultCase>
+          <f:variable name="type" value="list" />
+        </f:defaultCase>
+      </f:switch>
+      <f:switch expression="{type}">
+        <f:case value="table">
+          <!--[if mso | IE]>
+            <table
+              align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:{width}px;" width="{width}"
+            >
+              <tr>
+                <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+          <![endif]-->
+          <div style="background:#ffffff;background-color:#ffffff;Margin:0px auto;max-width:{width}px;">
+            <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
+              <tbody>
+                <tr>
+                  <td style="direction:ltr;font-size:0px;padding:2px {padding}px;text-align:center;vertical-align:top;">
+                    <!--[if mso | IE]>
+                      <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td class="" style="vertical-align:top;width:{widthColumn}px;" >
+                    <![endif]-->
+                    <div class="mj-column-per-50 outlook-group-fix" style="font-size:13px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                        <tr>
+                          <td align="left" style="font-size:0px;padding:0px 4px;word-break:break-word;">
+                            <div style="font-family:Arial, sans-serif;font-size:16px;line-height:1.4;text-align:left;color:#000000;">
+                              <div>{row.data.0 -> f:format.nl2br() -> f:format.raw()}</div>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <!--[if mso | IE]>
+                      </td>
+                      <td class="" style="vertical-align:top;width:{widthTableColumn}px;">
+                    <![endif]-->
+                    <div class="mj-column-per-50 outlook-group-fix" style="font-size:13px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%">
+                        <tr>
+                          <td align="left" style="font-size:0px;padding:0px 4px;word-break:break-word;">
+                            <div style="font-family:Arial, sans-serif;font-size:16px;line-height:1.4;text-align:left;color:#000000;">
+                              <div>{row.data.1 -> f:format.nl2br() -> f:format.raw()}</div>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <!--[if mso | IE]>
+                          </td>
+                        </tr>
+                      </table>
+                    <![endif]-->
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--[if mso | IE]>
+                </td>
+              </tr>
+            </table>
+          <![endif]-->
+        </f:case>
+        <f:case value="list">
+          <!--[if mso | IE]>
+            <table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:{width}px;" width="{width}" >
+              <tr>
+                <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+          <![endif]-->
+          <div style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:{width}px;">
+            <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;">
+              <tbody>
+                <tr>
+                  <td style="direction:ltr;font-size:0px;padding:0 {padding}px;text-align:center;">
+                    <!--[if mso | IE]>
+                      <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td class="" style="vertical-align:top;width:{widthPadded};" >
+                    <![endif]-->
+                    <div class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+                        <tbody>
+                          <tr>
+                            <td style="vertical-align:top;padding:0;">
+                              <table border="0" cellpadding="0" cellspacing="0" role="presentation" style width="100%">
+                                <tr>
+                                  <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
+                                    <div style="font-family:Arial, sans-serif;font-size:16px;line-height:1.4;text-align:left;color:#000000;">
+                                      <ul style="padding-left: 14px;">
+                                        <f:for each="{row.data}" as="dataRow" key="dataRowKey" iteration="dataRowI">
+                                          <li>{dataRow -> f:format.nl2br() -> f:format.raw()}</li>
+                                        </f:for>
+                                      </ul>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <!--[if mso | IE]>
+                          </td>
+                        </tr>
+                      </table>
+                    <![endif]-->
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--[if mso | IE]>
+                </td>
+              </tr>
+            </table>
+          <![endif]-->
+        </f:case>
+      </f:switch>
+    </f:then>
   </v:condition.type.isArray>
 </f:for>
