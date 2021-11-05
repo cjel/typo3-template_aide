@@ -3,7 +3,7 @@ namespace Cjel\TemplatesAide\Controller;
 
 /***
  *
- * This file is part of the "Templates Aide" Extension for TYPO3 CMS.
+ / This file is part of the "Templates Aide" Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
@@ -415,31 +415,6 @@ class ActionController extends BaseController
         return false;
     }
 
-    /**
-     * shortcut to get translation
-     *
-     * @return void
-     */
-    protected function getTranslation($key, $arguments = null)
-    {
-        $translation = LocalizationUtility::translate(
-            $key,
-            $this->getExtensionKey(),
-            $arguments
-        );
-        if ($translation) {
-            return $translation;
-        }
-        $translation = LocalizationUtility::translate(
-            $key,
-            'site_templates',
-            $arguments
-        );
-        if ($translation) {
-            return $translation;
-        }
-        return null;
-    }
 
     /**
      *
@@ -453,41 +428,6 @@ class ActionController extends BaseController
             '_domain_model_' .
             strtolower($reflection->getShortName());
     }
-
-    /**
-     * gets error label based on field and keyword, uses predefined extensionkey
-     */
-    protected function getErrorLabel($field, $keyword) {
-        $path = 'error.' . $field . '.' . $keyword;
-        $errorLabel = $this->getTranslation($path);
-        if ($errorLabel == null) {
-            return $path;
-        }
-        return $errorLabel;
-    }
-
-    /**
-     * function to add validation error manually in the controller
-     */
-    protected function addValidationError(
-        $field, $keyword, $overwrite = false
-    ) {
-        $this->isValid = false;
-        $this->responseStatus = [400 => 'validationError'];
-        if (!array_key_exists($field, $this->errors)
-            || $overwrite == true
-        ) {
-            $this->errors[$field] = [
-                'keyword' => $keyword,
-            ];
-            $this->errorLabels[$field] = $this->getErrorLabel(
-                $field,
-                $keyword
-            );
-        }
-    }
-
-
 
     /**
      * legacy function to prevent beaking old code

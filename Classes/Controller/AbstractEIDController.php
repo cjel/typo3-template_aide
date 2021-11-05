@@ -12,6 +12,8 @@ namespace Cjel\TemplatesAide\Controller;
  *
  ***/
 
+use Cjel\TemplatesAide\Traits\ValidationTrait;
+use Cjel\TemplatesAide\Traits\FormatResultTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -21,16 +23,28 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Frontend\Plugin\AbstractPlugin;
-use TYPO3\CMS\Frontend\Utility\EidUtility;
 use TYPO3\CMS\Extbase\Reflection\ClassSchema;
 use TYPO3\CMS\Extbase\Reflection\ReflectionService;
+use TYPO3\CMS\Frontend\Plugin\AbstractPlugin;
+use TYPO3\CMS\Frontend\Utility\EidUtility;
 
 /**
  * AbstractEIDController
  */
 class AbstractEIDController
 {
+
+    /**
+     * ValidationTrait
+     */
+    use ValidationTrait {
+        validateAgainstSchema as traitValidateAgainstSchema;
+    }
+
+    /**
+     * FormatResultTrait
+     */
+    use FormatResultTrait;
 
     /**
      * @var BackendConfigurationManager
@@ -99,10 +113,12 @@ class AbstractEIDController
         $this->apiUtility = $this->objectManager->get(
             \Cjel\TemplatesAide\Utility\ApiUtility::class
         );
-        $this->configurationManager->setConfiguration(array());
         $frameworkConfiguration = $this->configurationManager->getConfiguration(
             ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
             $this->getExtensionKey()
+        );
+        $this->configurationManager->setConfiguration(
+            $frameworkConfiguration
         );
         $this->settings = $frameworkConfiguration;
         $this->storagePids = explode(
@@ -239,6 +255,22 @@ class AbstractEIDController
         } else {
             return $response->withStatus(404);
         }
+    }
+
+    /**
+     * return function
+     *
+     * @param array $result
+     * @return void
+     */
+    protected function returnFunction(
+        $result      = []
+    ) {
+        $result = $this->formatResult($result);
+        unset($result['cid']);
+        unset($result['componentMode']);
+        unset($result['isValid']);
+        return $result;
     }
 
 }
