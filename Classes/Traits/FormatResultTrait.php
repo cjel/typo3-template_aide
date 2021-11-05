@@ -21,8 +21,7 @@ trait FormatResultTrait
     /**
      *
      */
-    public function formatResult()
-    {
+    public function formatResult($result) {
         if ($result == null) {
             $result = [];
         }

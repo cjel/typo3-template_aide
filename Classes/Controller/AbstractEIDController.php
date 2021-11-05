@@ -266,11 +266,26 @@ class AbstractEIDController
     protected function returnFunction(
         $result      = []
     ) {
-        $result = $this->formatResult($result);
+        $result = $this->formatResult($result, 'asd');
         unset($result['cid']);
         unset($result['componentMode']);
         unset($result['isValid']);
-        return $result;
+        if ($result) {
+            if (!empty($this->errors)) {
+                return $result;
+            } else {
+                return [
+                    'metadata' => [
+                        'total' => count($result),
+                        'count' => count($result),
+                    ],
+                    'result' => $result,
+                ];
+            }
+        } else {
+            return [];
+        }
+        //return $result;
     }
 
 }
