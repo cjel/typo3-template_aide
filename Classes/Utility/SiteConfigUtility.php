@@ -27,8 +27,10 @@ class SiteConfigUtility
      * @var string $path
      * @return string
      */
-    public static function getByPath($path)
-    {
+    public static function getByPath(
+        $path,
+        $limitToSiteConfig = true
+    ) {
         $pathParts = explode('.', $path);
         $objectManager = GeneralUtility::makeInstance(
             ObjectManager::class
@@ -40,7 +42,10 @@ class SiteConfigUtility
             ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
         );
         $typoscript = GeneralUtility::removeDotsFromTS($typoscript);
-        $siteConfig = $typoscript['config']['site'];
+        $siteConfig = $typoscript;
+        if ($limitToSiteConfig) {
+            $siteConfig = $typoscript['config']['site'];
+        }
         $current = &$siteConfig;
         foreach ($pathParts as $key) {
             $current = &$current[$key];
