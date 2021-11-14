@@ -88,7 +88,7 @@ trait DependencyInjectionTrait
         );
         $frameworkConfiguration = $this->configurationManager->getConfiguration(
             ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
-            $this->getExtensionKey()
+            str_replace('_', '', $this->getExtensionKey())
         );
         $this->configurationManager->setConfiguration(
             $frameworkConfiguration
