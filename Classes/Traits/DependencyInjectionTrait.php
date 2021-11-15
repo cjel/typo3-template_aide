@@ -19,18 +19,12 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Reflection\ClassSchema;
 use TYPO3\CMS\Extbase\Reflection\ReflectionService;
-use TYPO3\CMS\Frontend\Utility\EidUtility;
 
 /**
  * ValidationTrait
  */
 trait DependencyInjectionTrait
 {
-    /*
-     * extension Key
-     */
-    protected $extensionKey = null;
-
     /*
      * storagePids
      */
@@ -86,21 +80,19 @@ trait DependencyInjectionTrait
         $this->objectManager = GeneralUtility::makeInstance(
             ObjectManager::class
         );
-        $this->initFrontendController();
         $this->configurationManager = $this->objectManager->get(
             ConfigurationManagerInterface::class
-        );
-        $this->configurationManager->setConfiguration(
-            array()
         );
         $this->apiUtility = $this->objectManager->get(
             ApiUtility::class
         );
         $frameworkConfiguration = $this->configurationManager->getConfiguration(
             ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
-            $this->getExtensionKey()
+            str_replace('_', '', $this->getExtensionKey())
         );
-        $this->configurationManager->setConfiguration($frameworkConfiguration);
+        $this->configurationManager->setConfiguration(
+            $frameworkConfiguration
+        );
         $this->settings = $frameworkConfiguration;
         $this->storagePids = explode(
             ',',
@@ -124,31 +116,6 @@ trait DependencyInjectionTrait
             );
             $this->{$method}($class);
         }
-    }
-
-    /**
-     * Initialize frontentController
-     *
-     * @return void
-     */
-    private function initFrontendController()
-    {
-        $currentDomain = strtok(GeneralUtility::getIndpEnv('HTTP_HOST'), ':');
-        $frontendController = GeneralUtility::makeInstance(
-            \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::class,
-            $GLOBALS['TYPO3_CONF_VARS'],
-            null,
-            0,
-            true
-        );
-        $GLOBALS['TSFE'] = $frontendController;
-        $frontendController->connectToDB();
-        $frontendController->fe_user = EidUtility::initFeUser();
-        $frontendController->id = $result[0]['pid'];
-        $frontendController->determineId();
-        $frontendController->initTemplate();
-        $frontendController->getConfigArray();
-        EidUtility::initTCA();
     }
 
 }

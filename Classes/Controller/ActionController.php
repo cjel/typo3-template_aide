@@ -3,7 +3,7 @@ namespace Cjel\TemplatesAide\Controller;
 
 /***
  *
- * This file is part of the "Templates Aide" Extension for TYPO3 CMS.
+ / This file is part of the "Templates Aide" Extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
@@ -24,6 +24,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationBuilder;
+use TYPO3\CMS\Extbase\Service\EnvironmentService;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -149,6 +150,22 @@ class ActionController extends BaseController
     }
 
     /**
+     * environmentService
+     *
+     * @var EnvironmentService
+     */
+    protected $environmentService;
+
+    /**
+     * @param
+     */
+    public function injectEnvironmentService(
+        EnvironmentService $environmentService
+    ) {
+        $this->environmentService = $environmentService;
+    }
+
+    /**
      * propertyMapper
      *
      * @var PropertyMapper
@@ -204,9 +221,11 @@ class ActionController extends BaseController
      */
     public function initializeAction()
     {
-        $this->config = GeneralUtility::removeDotsFromTS(
-            $GLOBALS['TSFE']->config['config']
-        );
+        if ($GLOBALS['TSFE']->config['config']) {
+            $this->config = GeneralUtility::removeDotsFromTS(
+                $GLOBALS['TSFE']->config['config']
+            );
+        }
         $this->pageType = GeneralUtility::_GP('type');
         if (!is_numeric($this->pageType)) {
             $this->pageType = 0;
@@ -251,7 +270,7 @@ class ActionController extends BaseController
     }
 
     /**
-     * returns an instance of uribuilder
+     *
      */
     public function persistAll()
     {
@@ -396,31 +415,6 @@ class ActionController extends BaseController
         return false;
     }
 
-    /**
-     * shortcut to get translation
-     *
-     * @return void
-     */
-    protected function getTranslation($key, $arguments = null)
-    {
-        $translation = LocalizationUtility::translate(
-            $key,
-            $this->getExtensionKey(),
-            $arguments
-        );
-        if ($translation) {
-            return $translation;
-        }
-        $translation = LocalizationUtility::translate(
-            $key,
-            'site_templates',
-            $arguments
-        );
-        if ($translation) {
-            return $translation;
-        }
-        return null;
-    }
 
     /**
      *
@@ -434,41 +428,6 @@ class ActionController extends BaseController
             '_domain_model_' .
             strtolower($reflection->getShortName());
     }
-
-    /**
-     * gets error label based on field and keyword, uses predefined extensionkey
-     */
-    protected function getErrorLabel($field, $keyword) {
-        $path = 'error.' . $field . '.' . $keyword;
-        $errorLabel = $this->getTranslation($path);
-        if ($errorLabel == null) {
-            return $path;
-        }
-        return $errorLabel;
-    }
-
-    /**
-     * function to add validation error manually in the controller
-     */
-    protected function addValidationError(
-        $field, $keyword, $overwrite = false
-    ) {
-        $this->isValid = false;
-        $this->responseStatus = [400 => 'validationError'];
-        if (!array_key_exists($field, $this->errors)
-            || $overwrite == true
-        ) {
-            $this->errors[$field] = [
-                'keyword' => $keyword,
-            ];
-            $this->errorLabels[$field] = $this->getErrorLabel(
-                $field,
-                $keyword
-            );
-        }
-    }
-
-
 
     /**
      * legacy function to prevent beaking old code
@@ -594,11 +553,14 @@ class ActionController extends BaseController
             ->setCreateAbsoluteUri(true)
             ->setAddQueryString(true)
             ->setTargetPageType($this->ajaxPageType)
-            ->setArguments(['cid' => $this->contentObjectUid])
+            ->setArguments([
+                'cid'  => $this->contentObjectUid,
+                'type' => $this->ajaxPageType,
+            ])
             ->uriFor($this->request->getControllerActionName());
         $this->ajaxEnv = [
-            'uri' => $uri,
-            'object' => $object,
+            'uri'       => $uri,
+            'object'    => $object,
             'namespace' => $this->getPluginNamespace(),
         ];
     }
@@ -742,7 +704,11 @@ class ActionController extends BaseController
                 $this->response->setStatus($this->responseStatus);
             }
             if ($this->pageType == $this->ajaxPageType) {
-                $GLOBALS['TSFE']->setContentType('application/json');
+                if ($this->environmentService->isEnvironmentInBackendMode()) {
+                    header('Content-Type: application/json');
+                } else {
+                    $GLOBALS['TSFE']->setContentType('application/json');
+                }
             }
             unset($result['data']);
             if ($this->redirect) {
@@ -767,5 +733,4 @@ class ActionController extends BaseController
         }
         $this->view->assignMultiple($result);
     }
-
 }

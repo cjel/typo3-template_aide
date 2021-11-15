@@ -1,0 +1,50 @@
+<v:variable.set name="br">
+</v:variable.set>
+<f:for
+  each="{content}"
+  as="row"
+  key="rowKey"
+  iteration="rowI"
+  ><f:spaceless>
+    <v:condition.type.isArray value="{row.data}">
+      <f:else>
+        <f:switch expression="{row.type}">
+          <f:case value="headline">
+            # {row.data -> f:format.nl2br() -> f:format.raw()}
+            <f:spaceless></f:spaceless>
+          </f:case>
+          <f:case value="headline2">
+            ## {row.data -> f:format.nl2br() -> f:format.raw()}
+          </f:case>
+          <f:case value="headline3">
+            ### {row.data -> f:format.nl2br() -> f:format.raw()}
+          </f:case>
+          <f:defaultCase>
+              <f:spaceless><v:format.wordWrap limit="76" glue="{br}">
+                {row.data -> f:format.raw()}
+              </v:format.wordWrap>
+            </f:spaceless>{br}{br}
+          </f:defaultCase>
+        </f:switch>
+      </f:else>
+
+      <f:then>
+        <f:switch expression="{row.type}">
+          <f:case value="tableLayout">
+            {row.data.0 -> f:format.raw()}{br}{br}{row.data.1 -> f:format.raw()}{br}
+          </f:case>
+          <f:case value="table">
+            {row.data.0 -> f:format.raw()}: {row.data.1 -> f:format.raw()}
+          </f:case>
+          <f:case value="list">
+            <f:for each="{row.data}" as="dataRow" key="dataRowKey" iteration="dataRowI">- <f:spaceless><v:format.wordWrap limit="76" glue="{br}  " >
+                {dataRow -> f:format.raw()}
+              </v:format.wordWrap>
+            </f:spaceless>{br}{br}</f:for>
+          </f:case>
+          <f:defaultCase>
+          </f:defaultCase>
+        </f:switch>
+      </f:then>
+    </v:condition.type.isArray>
+</f:spaceless><f:if condition="{row.type} == 'table'"><f:then>{br}<f:if condition="{content.{rowI.cycle}.type} == 'table'"><f:else>{br}</f:else></f:if></f:then><f:else><f:if condition="{content.{rowI.cycle}}"><f:then>{br}{br}</f:then></f:if></f:else></f:if></f:for>

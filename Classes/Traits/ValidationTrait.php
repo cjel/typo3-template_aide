@@ -16,6 +16,7 @@ use \Opis\JsonSchema\{
     Validator, ValidationResult, ValidationError, Schema
 };
 use Cjel\TemplatesAide\Utility\ArrayUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * ValidationTrait
@@ -95,5 +96,65 @@ trait ValidationTrait
         }
         return $validationResult;
     }
+
+    /**
+     * function to add validation error manually in the controller
+     */
+    protected function addValidationError(
+        $field, $keyword, $overwrite = false
+    ) {
+        $this->isValid = false;
+        $this->responseStatus = [400 => 'validationError'];
+        if (!array_key_exists($field, $this->errors)
+            || $overwrite == true
+        ) {
+            $this->errors[$field] = [
+                'keyword' => $keyword,
+            ];
+            $this->errorLabels[$field] = $this->getErrorLabel(
+                $field,
+                $keyword
+            );
+        }
+    }
+
+    /**
+     * gets error label based on field and keyword, uses predefined extensionkey
+     */
+    protected function getErrorLabel($field, $keyword) {
+        $path = 'error.' . $field . '.' . $keyword;
+        $errorLabel = $this->getTranslation($path);
+        if ($errorLabel == null) {
+            return $path;
+        }
+        return $errorLabel;
+    }
+
+    /**
+     * shortcut to get translation
+     *
+     * @return void
+     */
+    protected function getTranslation($key, $arguments = null)
+    {
+        $translation = LocalizationUtility::translate(
+            $key,
+            $this->getExtensionKey(),
+            $arguments
+        );
+        if ($translation) {
+            return $translation;
+        }
+        $translation = LocalizationUtility::translate(
+            $key,
+            'site_templates',
+            $arguments
+        );
+        if ($translation) {
+            return $translation;
+        }
+        return null;
+    }
+
 
 }

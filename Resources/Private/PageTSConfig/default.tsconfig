@@ -1,1 +1,5 @@
 <INCLUDE_TYPOSCRIPT: source="FILE:EXT:templates_aide/Resources/Private/PageTSConfig/lib/layout.tsconfig">
+
+[applicationContext = Development]
+TCAdefaults.pages.hidden = 0
+[end]
