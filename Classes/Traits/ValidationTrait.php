@@ -16,6 +16,7 @@ use \Opis\JsonSchema\{
     Validator, ValidationResult, ValidationError, Schema
 };
 use Cjel\TemplatesAide\Utility\ArrayUtility;
+use Sarhan\Flatten\Flatten;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -38,6 +39,63 @@ trait ValidationTrait
      * errors labels
      */
     protected $errorLabels = [];
+
+    /**
+     * validate objects
+     *
+     * @param $input
+     * @param schema
+     * @return void
+     */
+    protected function convertInputBySchema($input, $schema)
+    {
+        $flatten = new Flatten();
+        $schemaFlat = $flatten->flattenToArray($schema);
+        $typesList = [];
+        foreach ($schemaFlat as $index => $row) {
+            if (substr($index, -5) == '.type') {
+                $dataIndex = preg_replace(
+                    '/(\.)(properties\.|items\.)/',
+                    '$1',
+                    $index
+                );
+                $dataIndex = preg_replace(
+                    '/^properties\./',
+                    '',
+                    $dataIndex
+                );
+                $dataIndex = preg_replace(
+                    '/\.type$/',
+                    '',
+                    $dataIndex
+                );
+                $typesList[$dataIndex] = $row;
+            }
+        }
+        foreach ($input as $index => $row) {
+            $rowType = $typesList[$index];
+            if (!$rowType) {
+                continue;
+            }
+            switch ($rowType) {
+            case 'integer':
+                if (is_numeric($row)) {
+                    settype($input[$index], $rowType);
+                }
+                break;
+            case 'boolean':
+                $testResult = filter_var(
+                    $row,
+                    FILTER_VALIDATE_BOOLEAN,
+                    [FILTER_NULL_ON_FAILURE]
+                );
+                if ($testResult === true || $testResult === false) {
+                    $input[$index] = $testResult;
+                }
+            }
+        }
+        return $input;
+    }
 
     /**
      * validate objects
