@@ -52,28 +52,33 @@ trait ValidationTrait
         $flatten = new Flatten();
         $schemaFlat = $flatten->flattenToArray($schema);
         $typesList = [];
+        $formatsList = [];
         foreach ($schemaFlat as $index => $row) {
+            $dataIndex = preg_replace(
+                '/(\.)(properties\.|items\.)/',
+                '$1',
+                $index
+            );
+            $dataIndex = preg_replace(
+                '/^properties\./',
+                '',
+                $dataIndex
+            );
+            $dataIndex = preg_replace(
+                '/\.(type|format)$/',
+                '',
+                $dataIndex
+            );
             if (substr($index, -5) == '.type') {
-                $dataIndex = preg_replace(
-                    '/(\.)(properties\.|items\.)/',
-                    '$1',
-                    $index
-                );
-                $dataIndex = preg_replace(
-                    '/^properties\./',
-                    '',
-                    $dataIndex
-                );
-                $dataIndex = preg_replace(
-                    '/\.type$/',
-                    '',
-                    $dataIndex
-                );
                 $typesList[$dataIndex] = $row;
+            }
+            if (substr($index, -7) == '.format') {
+                $formatsList[$dataIndex] = $row;
             }
         }
         foreach ($input as $index => $row) {
             $rowType = $typesList[$index];
+            $formatType = $formatsList[$index];
             if (!$rowType) {
                 continue;
             }
@@ -92,6 +97,16 @@ trait ValidationTrait
                 if ($testResult === true || $testResult === false) {
                     $input[$index] = $testResult;
                 }
+            case 'string':
+                switch ($formatType) {
+                case 'date':
+                    $row = \DateTime::createFromFormat(
+                        'Y-m-d H:i:s',
+                        $row . ' 00:00:00',
+                    );
+                    break;
+                }
+                break;
             }
         }
         return $input;

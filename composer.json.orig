@@ -1,0 +1,33 @@
+{
+    "name": "cjel/templates-aide",
+    "type": "typo3-cms-extension",
+    "description": "",
+    "authors": [
+        {
+            "name": "Philipp Dieter",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+<<<<<<< HEAD
+        "typo3/cms-core": "8.7.0 - 9.5.99",
+        "sarhan/php-flatten": "^4.0"
+=======
+        "typo3/cms-core": "8.7.0 - 10.99.99"
+>>>>>>> 4a4b809d13bd33b85d84f03eba5edb603d74abfb
+    },
+    "autoload": {
+        "psr-4": {
+            "Cjel\\TemplatesAide\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cjel\\TemplatesAide\\Tests\\": "Tests"
+        }
+    },
+    "replace": {
+        "templates_aide": "self.version",
+        "typo3-ter/templates-aide": "self.version"
+    }
+}
