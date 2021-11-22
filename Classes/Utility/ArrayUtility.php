@@ -22,7 +22,11 @@ class ArrayUtility
      */
     public static function toObject($array) {
         if (is_array($array)) {
-            return (object) array_map([__CLASS__, __METHOD__], $array);
+            if (self::isAssoc($array)) {
+                return (object) array_map([__CLASS__, __METHOD__], $array);
+            } else {
+                return array_map([__CLASS__, __METHOD__], $array);
+            }
         } else {
             return $array;
         }
@@ -44,6 +48,17 @@ class ArrayUtility
         }
         unset($value);
         return $array;
+    }
+
+
+    /**
+     *
+     */
+    public static function isAssoc(array $arr) {
+        if (array() === $arr) {
+            return false;
+        }
+        return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
 }

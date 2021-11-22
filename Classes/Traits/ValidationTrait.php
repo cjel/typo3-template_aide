@@ -16,6 +16,7 @@ use \Opis\JsonSchema\{
     Validator, ValidationResult, ValidationError, Schema
 };
 use Cjel\TemplatesAide\Utility\ArrayUtility;
+use Sarhan\Flatten\Flatten;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -46,6 +47,78 @@ trait ValidationTrait
      * @param schema
      * @return void
      */
+    protected function convertInputBySchema($input, $schema)
+    {
+        $flatten = new Flatten();
+        $schemaFlat = $flatten->flattenToArray($schema);
+        $typesList = [];
+        $formatsList = [];
+        foreach ($schemaFlat as $index => $row) {
+            $dataIndex = preg_replace(
+                '/(\.)(properties\.|items\.)/',
+                '$1',
+                $index
+            );
+            $dataIndex = preg_replace(
+                '/^properties\./',
+                '',
+                $dataIndex
+            );
+            $dataIndex = preg_replace(
+                '/\.(type|format)$/',
+                '',
+                $dataIndex
+            );
+            if (substr($index, -5) == '.type') {
+                $typesList[$dataIndex] = $row;
+            }
+            if (substr($index, -7) == '.format') {
+                $formatsList[$dataIndex] = $row;
+            }
+        }
+        foreach ($input as $index => $row) {
+            $rowType = $typesList[$index];
+            $formatType = $formatsList[$index];
+            if (!$rowType) {
+                continue;
+            }
+            switch ($rowType) {
+            case 'integer':
+                if (is_numeric($row)) {
+                    settype($input[$index], $rowType);
+                }
+                break;
+            case 'boolean':
+                $testResult = filter_var(
+                    $row,
+                    FILTER_VALIDATE_BOOLEAN,
+                    [FILTER_NULL_ON_FAILURE]
+                );
+                if ($testResult === true || $testResult === false) {
+                    $input[$index] = $testResult;
+                }
+            case 'string':
+                switch ($formatType) {
+                case 'date':
+                    $row = \DateTime::createFromFormat(
+                        'Y-m-d H:i:s',
+                        $row . ' 00:00:00',
+                    );
+                    break;
+                }
+                break;
+            }
+        }
+        return $input;
+    }
+
+    /**
+     * validate objects
+     *
+     * @param $input
+     * @param schema
+     * @return void
+     */
     protected function validateAgainstSchema($input, $schema)
     {
         $validator = new Validator();
@@ -68,9 +141,6 @@ trait ValidationTrait
         if (!$validationResult->isValid()) {
             $this->isValid = false;
             $this->responseStatus = [400 => 'validationError'];
-            //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
-            //    $validationResult->getErrors(), false, 9, true
-            //);
             foreach ($validationResult->getErrors() as $error){
                 $field = implode('.', $error->dataPointer());
                 if ($error->keyword() == 'required') {

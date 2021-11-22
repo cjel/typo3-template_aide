@@ -280,6 +280,13 @@ class MailUtility
                     $bodydataText[] = $textRow;
                     $bodydataHtml[] = $htmlRow;
                     break;
+                case 'attachment':
+                    $mail->attach(new \Swift_Attachment(
+                        $row['data'][0],
+                        $row['data'][1],
+                        $row['data'][2]
+                    ));
+                    break;
                 case 'attachmentBase64':
                     $attachmentdata = explode(',', $row['data']);
                     preg_match('/\w*:(.*);\w*/', $attachmentdata[0], $matches);

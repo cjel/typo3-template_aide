@@ -9,8 +9,12 @@
         }
     ],
     "require": {
-        "typo3/cms-core": "8.7.0 - 10.99.99",
+<<<<<<< HEAD
+        "typo3/cms-core": "8.7.0 - 9.5.99",
         "sarhan/php-flatten": "^4.0"
+=======
+        "typo3/cms-core": "8.7.0 - 10.99.99"
+>>>>>>> 4a4b809d13bd33b85d84f03eba5edb603d74abfb
     },
     "autoload": {
         "psr-4": {
