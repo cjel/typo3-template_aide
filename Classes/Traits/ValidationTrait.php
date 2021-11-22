@@ -102,7 +102,7 @@ trait ValidationTrait
                 case 'date':
                     $row = \DateTime::createFromFormat(
                         'Y-m-d H:i:s',
-                        $row . ' 00:00:00',
+                        $row . ' 00:00:00'
                     );
                     break;
                 }
