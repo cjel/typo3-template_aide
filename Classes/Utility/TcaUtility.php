@@ -50,9 +50,17 @@ class TcaUtility
      * @return void
      */
     public static function configureSelectFromArray(
-        &$tca, $column, $element, $options, $extensionKey = null
+        &$tca,
+        $column,
+        $element,
+        $options,
+        $extensionKey = null,
+        $addEmpty     = false
     ) {
         $items = [];
+        if ($addEmpty) {
+            $items[] = ['-', ''];
+        }
         foreach ($options as $option) {
             $translationKey = "option.$element.$column.$option";
             $translation = self::getTranslation(
