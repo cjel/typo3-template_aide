@@ -41,7 +41,7 @@ class Double2Converter extends AbstractTypeConverter
      * @return bool
      * @internal only to be used within Extbase, not part of TYPO3 Core API.
      */
-    public function canConvertFrom($source, $targetType)
+    public function canConvertFrom($source, $targetType): bool
     {
         return is_string($source) ||is_integer($source);
     }
