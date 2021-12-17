@@ -547,17 +547,32 @@ class ActionController extends BaseController
         if ($object == null) {
             $object = $this->arguments->getArgumentNames()[0];
         }
+        $pluginArguments = [];
+        foreach ($this->arguments as $argument) {
+            if (in_array($argument->getName(), ['step', 'submit', $object])) {
+                continue;
+            }
+            if (method_exists($argument->getValue(), 'getUid')) {
+                $pluginArguments[$argument->getName()]
+                    = $argument->getValue()->getUid();
+            } else {
+                $pluginArguments[$argument->getName()] = $argument->getValue();
+            }
+        }
+        $arguments = [];
+        $arguments['cid']  = $this->contentObjectUid;
+        $arguments['type'] = $this->ajaxPageType;
         $uri = $this->getControllerContext()
             ->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)
             ->setAddQueryString(true)
             ->setTargetPageType($this->ajaxPageType)
-            ->setArguments([
-                'cid'  => $this->contentObjectUid,
-                'type' => $this->ajaxPageType,
-            ])
-            ->uriFor($this->request->getControllerActionName());
+            ->setArguments($arguments)
+            ->uriFor(
+                $this->request->getControllerActionName(),
+                $pluginArguments
+            );
         $this->ajaxEnv = [
             'uri'       => $uri,
             'object'    => $object,
