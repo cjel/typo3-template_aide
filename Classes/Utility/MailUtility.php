@@ -233,6 +233,11 @@ class MailUtility
                                 return preg_replace_callback(
                                     '/\[(\S*)\s(.*)\]/mU',
                                     function($matchesInner) {
+                                        if (
+                                            $matchesInner[2] == $matchesInner[1]
+                                        ) {
+                                            return $matchesInner[1];
+                                        }
                                         return $matchesInner[2]
                                             . ': '
                                             . $matchesInner[1];
