@@ -330,8 +330,13 @@ class MailUtility
                 $htmlBody
             );
         }
-        $mail->setBody($textBody);
-        $mail->addPart($htmlBody, 'text/html');
+        if (version_compare(TYPO3_branch, '10.0', '>=')) {
+            $mail->html($htmlBody);
+            $mail->text($textBody);
+        } else {
+            $mail->setBody($textBody);
+            $mail->addPart($htmlBody, 'text/html');
+        }
         $recipients = explode(
             ',',
             $target
