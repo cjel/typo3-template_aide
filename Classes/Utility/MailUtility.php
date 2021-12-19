@@ -214,6 +214,17 @@ class MailUtility
                         },
                         $htmlRow['data']
                     );
+                    $htmlRow['data'] = preg_replace_callback(
+                        '/\*.*\*/mU',
+                        function($matches) {
+                            foreach ($matches as $match) {
+                                return '<b>'
+                                    . substr($match, 1, -1)
+                                    . '</b>';
+                            }
+                        },
+                        $htmlRow['data']
+                    );
                     $textRow = $row;
                     $textRow['data'] = preg_replace_callback(
                         '/\[.*\]/mU',
