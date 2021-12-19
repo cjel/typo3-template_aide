@@ -58,4 +58,38 @@ class SiteConfigUtility
         }
         return $current;
     }
+
+    /**
+     * Gets extension config by typoscript path
+     *
+     * @var string $path
+     * @return string
+     */
+    public static function getFromExtensionByPath(
+        $extensionName,
+        $path
+    ) {
+        $pathParts = explode('.', $path);
+        $objectManager = GeneralUtility::makeInstance(
+            ObjectManager::class
+        );
+        $configurationManager = $objectManager->get(
+            ConfigurationManagerInterface::class
+        );
+        $typoscript = $configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
+            $extensionName
+        );
+        $current = &$typoscript;
+        foreach ($pathParts as $key) {
+            if (
+                !is_array($current)
+                || !array_key_exists($key, $current)
+            ) {
+                return null;
+            }
+            $current = &$current[$key];
+        }
+        return $current;
+    }
 }
