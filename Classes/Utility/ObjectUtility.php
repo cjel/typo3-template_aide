@@ -93,6 +93,13 @@ class ObjectUtility
                     $value = StringUtility::checkAndfixUtf8($value);
                     $object->_setProperty($property, $value);
                 } elseif (
+                    get_class($methodType) == 'ReflectionNamedType'
+                    &&
+                    substr($property, -3) != 'Uid'
+                ) {
+                    $value = StringUtility::checkAndfixUtf8($value);
+                    $object->_setProperty($property, $value);
+                } elseif (
                     substr($property, -3) === 'Uid'
                 ) {
                     $typeParts = explode('\\', (string)$methodType);

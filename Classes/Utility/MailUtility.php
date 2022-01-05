@@ -214,6 +214,17 @@ class MailUtility
                         },
                         $htmlRow['data']
                     );
+                    $htmlRow['data'] = preg_replace_callback(
+                        '/\*.*\*/mU',
+                        function($matches) {
+                            foreach ($matches as $match) {
+                                return '<b>'
+                                    . substr($match, 1, -1)
+                                    . '</b>';
+                            }
+                        },
+                        $htmlRow['data']
+                    );
                     $textRow = $row;
                     $textRow['data'] = preg_replace_callback(
                         '/\[.*\]/mU',
@@ -222,6 +233,11 @@ class MailUtility
                                 return preg_replace_callback(
                                     '/\[(\S*)\s(.*)\]/mU',
                                     function($matchesInner) {
+                                        if (
+                                            $matchesInner[2] == $matchesInner[1]
+                                        ) {
+                                            return $matchesInner[1];
+                                        }
                                         return $matchesInner[2]
                                             . ': '
                                             . $matchesInner[1];
@@ -314,8 +330,13 @@ class MailUtility
                 $htmlBody
             );
         }
-        $mail->setBody($textBody);
-        $mail->addPart($htmlBody, 'text/html');
+        if (version_compare(TYPO3_branch, '10.0', '>=')) {
+            $mail->html($htmlBody);
+            $mail->text($textBody);
+        } else {
+            $mail->setBody($textBody);
+            $mail->addPart($htmlBody, 'text/html');
+        }
         $recipients = explode(
             ',',
             $target

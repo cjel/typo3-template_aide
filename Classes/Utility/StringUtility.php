@@ -71,4 +71,20 @@ class StringUtility
         }
         return $string;
     }
+
+    public static function removeCHashIfOnlyParameter($uri) {
+        $parsedUri = parse_url($uri);
+        parse_str($parsedUri['query'], $parsedQuery);
+        if (
+            count($parsedQuery) == 1
+            && array_key_exists('cHash', $parsedQuery)
+        ) {
+            unset($parsedQuery['cHash']);
+        }
+        $updatedQuery = http_build_query($parsedQuery);
+        return $parsedUri['scheme'] . '://'
+            . $parsedUri['host']
+            . $parsedUri['path']
+            . ($updatedQuery ? '?' . $updatedQuery : '');
+    }
 }

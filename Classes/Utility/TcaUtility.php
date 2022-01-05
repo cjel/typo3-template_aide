@@ -14,6 +14,8 @@ namespace Cjel\TemplatesAide\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Localization\LanguageService;
 
 /**
  *
@@ -88,23 +90,35 @@ class TcaUtility
      */
     public static function getTranslation($key, $extensionKey)
     {
-        if ($extensionKey) {
+        if (version_compare(TYPO3_branch, '10.0', '>=')) {
+            if (!$extensionKey) {
+                $extensionKey = 'site_templates';
+            }
+            return implode([
+                'LLL:EXT:',
+                 $extensionKey,
+                 '/Resources/Private/Language/locallang_db.xlf:',
+                 $key
+            ]);
+        } else {
+            if ($extensionKey) {
+                $translation = LocalizationUtility::translate(
+                    $key,
+                    $extensionKey
+                );
+                if ($translation) {
+                    return $translation;
+                }
+            }
             $translation = LocalizationUtility::translate(
                 $key,
-                $extensionKey
+                'site_templates'
             );
             if ($translation) {
                 return $translation;
             }
+            return null;
         }
-        $translation = LocalizationUtility::translate(
-            $key,
-            'site_templates'
-        );
-        if ($translation) {
-            return $translation;
-        }
-        return null;
     }
 
     /**

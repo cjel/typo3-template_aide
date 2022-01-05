@@ -111,6 +111,11 @@ trait DependencyInjectionTrait
             get_class($this)
         );
         foreach ($classInfo->getInjectMethods() as $method => $className) {
+            if (version_compare(TYPO3_branch, '10.0', '>=')) {
+                $className = $className
+                    ->getFirstParameter()
+                    ->getDependency();
+            }
             $class = $this->objectManager->get(
                 $className
             );

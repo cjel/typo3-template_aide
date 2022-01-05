@@ -21,6 +21,9 @@ class ArrayUtility
      * function arrayTobject
      */
     public static function toObject($array) {
+        if ($array === []) {
+            return (object)$array;
+        }
         if (is_array($array)) {
             if (self::isAssoc($array)) {
                 return (object) array_map([__CLASS__, __METHOD__], $array);
@@ -49,7 +52,6 @@ class ArrayUtility
         unset($value);
         return $array;
     }
-
 
     /**
      *

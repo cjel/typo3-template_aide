@@ -7,3 +7,8 @@ options {
         hideCreateFolder = 1
     }
 }
+
+[applicationContext != 'Development']
+options.clearCache.all = 0
+options.clearCache.pages = 1
+[end]
