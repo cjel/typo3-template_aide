@@ -12,6 +12,7 @@ namespace Cjel\TemplatesAide\Utility;
  *
  ***/
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -105,4 +106,28 @@ class TcaUtility
         }
         return null;
     }
+
+    /**
+     * change position of element in fieldlist
+     *
+     * @return array
+     */
+
+    public static function listMoveFieldAfterField(
+        $fieldList, $field, $fieldAfter
+    ) {
+        $fieldlist = GeneralUtility::trimExplode(
+            ',',
+            $fieldList
+        );
+        unset($fieldlist[(array_search($field, $fieldlist))]);
+        array_splice(
+            $fieldlist,
+            array_search($fieldAfter, $fieldlist) + 1,
+            0,
+            $field
+        );
+        return implode(', ', $fieldlist);
+    }
+
 }
