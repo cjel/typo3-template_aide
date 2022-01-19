@@ -125,7 +125,6 @@ class TcaUtility
      *
      * @return array
      */
-
     public static function listMoveFieldAfterField(
         $fieldList, $field, $fieldAfter
     ) {
@@ -140,6 +139,22 @@ class TcaUtility
             0,
             $field
         );
+        return implode(', ', $fieldlist);
+    }
+
+    /**
+     * remove element from fieldlist
+     *
+     * @return array
+     */
+    public static function listRemoveField(
+        $fieldList, $field
+    ) {
+        $fieldlist = GeneralUtility::trimExplode(
+            ',',
+            $fieldList
+        );
+        unset($fieldlist[(array_search($field, $fieldlist))]);
         return implode(', ', $fieldlist);
     }
 
