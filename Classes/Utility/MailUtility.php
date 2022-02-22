@@ -132,7 +132,8 @@ class MailUtility
         $data,
         $templateNameHtml = null,
         $templateNameText = null,
-        $templatePaths = null
+        $templatePaths    = null,
+        $assetDomain      = null
     ) {
         if (!$templateNameHtml) {
             $templateNameHtml = 'Mails/DefaultHtml';
@@ -194,6 +195,11 @@ class MailUtility
                 case 'headline':
                 case 'headline2':
                 case 'headline3':
+                    $row['data'] = str_replace(
+                        "\\\n",
+                        '',
+                        $row['data']
+                    );
                     $htmlRow = $row;
                     $htmlRow['data'] = preg_replace_callback(
                         '/\[.*\]/mU',
@@ -320,6 +326,9 @@ class MailUtility
         $textView->assign('content', $bodydataText);
         $htmlView->assign('content', $bodydataHtml);
         $domain = $settings['mailDomain'];
+        if ($assetDomain) {
+            $domain = $assetDomain;
+        }
         $htmlView->assign('domain', $domain);
         $textBody = $textView->render();
         $htmlBody = $htmlView->render();
@@ -327,6 +336,11 @@ class MailUtility
             $htmlBody = str_replace(
                 'src="/assets',
                 'src="' . $domain . '/assets',
+                $htmlBody
+            );
+            $htmlBody = str_replace(
+                'src="/public',
+                'src="' . $domain . '/public',
                 $htmlBody
             );
         }
