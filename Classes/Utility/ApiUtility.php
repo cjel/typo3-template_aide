@@ -206,6 +206,9 @@ class ApiUtility
                         $row,
                         $rowResult
                     );
+                    if ($rowResult[$attributeName] === null) {
+                        unset($rowResult[$attributeName]);
+                    }
                 }
             }
             $result[] = $rowResult;
