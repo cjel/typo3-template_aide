@@ -59,6 +59,18 @@ class MailUtility
                 $type = 'list';
                 $textPart = substr($textPart, 2);
             }
+            if (substr($textPart, 0, 3) === '+< ') {
+                $type = 'buttonleft';
+                $textPart = substr($textPart, 3);
+            }
+            if (substr($textPart, 0, 3) === '+| ') {
+                $type = 'buttoncenter';
+                $textPart = substr($textPart, 3);
+            }
+            if (substr($textPart, 0, 3) === '+> ') {
+                $type = 'buttonright';
+                $textPart = substr($textPart, 3);
+            }
             if (substr($textPart, 0, 2) === '| ') {
                 $type = 'table';
                 $textPart = substr($textPart, 2);
@@ -195,6 +207,10 @@ class MailUtility
                 case 'headline':
                 case 'headline2':
                 case 'headline3':
+                case 'button':
+                case 'buttonleft':
+                case 'buttoncenter':
+                case 'buttonright':
                     $row['data'] = str_replace(
                         "\\\n",
                         '',
@@ -203,16 +219,33 @@ class MailUtility
                     $htmlRow = $row;
                     $htmlRow['data'] = preg_replace_callback(
                         '/\[.*\]/mU',
-                        function($matches) {
+                        function($matches) use ($row) {
                             foreach ($matches as $match) {
                                 return preg_replace_callback(
                                     '/\[(\S*)\s(.*)\]/mU',
-                                    function($matchesInner) {
-                                        return '<a href="'
-                                            . $matchesInner[1]
-                                            . '">'
-                                            . $matchesInner[2]
-                                            . '</a>';
+                                    function($matchesInner) use ($row) {
+                                        switch($row['type']) {
+                                        case 'button':
+                                        case 'buttonleft':
+                                        case 'buttoncenter':
+                                        case 'buttonright':
+                                            return '<a style="display: inline-block;" href="'
+                                                . $matchesInner[1]
+                                                . '">'
+                                                . '<span style="display: inline-block; padding: 10px 15px; border-radius: 3px; background-color: red;">'
+                                                . 'Button!!!! '
+                                                . $matchesInner[2]
+                                                . '</span>'
+                                                . '</a>';
+                                            break;
+                                        default:
+                                            return '<a href="'
+                                                . $matchesInner[1]
+                                                . '">'
+                                                . $matchesInner[2]
+                                                . '</a>';
+                                            break;
+                                        }
                                     },
                                     $match
                                 );
@@ -257,51 +290,77 @@ class MailUtility
                     $bodydataText[] = $textRow;
                     $bodydataHtml[] = $htmlRow;
                     break;
-                case 'button':
-                case 'buttons':
-                    $htmlRow = $row;
-                    //$htmlRow['targets'] = preg_replace_callback(
-                    //    '/\[.*\]/mU',
-                    //    function($matches) {
-                    //        foreach ($matches as $match) {
-                    //            return preg_replace_callback(
-                    //                '/\[(\S*)\s(.*)\]/mU',
-                    //                function($matchesInner) {
-                    //                    return $matchesInner;
-                    //                    //return '<a href="'
-                    //                    //    . $matchesInner[1]
-                    //                    //    . '">'
-                    //                    //    . $matchesInner[2]
-                    //                    //    . '</a>';
-                    //                },
-                    //                $match
-                    //            );
-                    //        }
-                    //    },
-                    //    $htmlRow['targets']
-                    //);
-                    $textRow = $row;
-                    //$textRow['targets'] = preg_replace_callback(
-                    //    '/\[.*\]/mU',
-                    //    function($matches) {
-                    //        foreach ($matches as $match) {
-                    //            return preg_replace_callback(
-                    //                '/\[(\S*)\s(.*)\]/mU',
-                    //                function($matchesInner) {
-                    //                    return $matchesInner;
-                    //                    //return $matchesInner[2]
-                    //                    //    . ': '
-                    //                    //    . $matchesInner[1];
-                    //                },
-                    //                $match
-                    //            );
-                    //        }
-                    //    },
-                    //    $textRow['targets']
-                    //);
-                    $bodydataText[] = $textRow;
-                    $bodydataHtml[] = $htmlRow;
-                    break;
+                //case 'button':
+                //    $row['data'] = str_replace(
+                //        "\\\n",
+                //        '',
+                //        $row['data']
+                //    );
+                //    $htmlRow = $row;
+                //    $htmlRow['data'] = preg_replace_callback(
+                //        '/\[.*\]/mU',
+                //        function($matches) {
+                //            foreach ($matches as $match) {
+                //                $test = preg_replace_callback(
+                //                    '/\[(\S*)\s(.*)\]/mU',
+                //                    function($matchesInner) {
+                //
+                //                        return '<a href="'
+                //                            . $matchesInner[1]
+                //                            . '">'
+                //                            . $matchesInner[2]
+                //                            . '</a>';
+                //                    },
+                //                    $match
+                //                );
+                //                \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
+                //                    $test, null, 3, true, false
+                //                );
+                //                return $test;
+                //            }
+                //        },
+                //        $htmlRow['data']
+                //    );
+                //    \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
+                //        $htmlRow['data'], null, 3, true, false
+                //    );
+                //    $htmlRow['data'] = preg_replace_callback(
+                //        '/\*.*\*/mU',
+                //        function($matches) {
+                //            foreach ($matches as $match) {
+                //                return '<b>'
+                //                    . substr($match, 1, -1)
+                //                    . '</b>';
+                //            }
+                //        },
+                //        $htmlRow['data']
+                //    );
+                //    $textRow = $row;
+                //    $textRow['data'] = preg_replace_callback(
+                //        '/\[.*\]/mU',
+                //        function($matches) {
+                //            foreach ($matches as $match) {
+                //                return preg_replace_callback(
+                //                    '/\[(\S*)\s(.*)\]/mU',
+                //                    function($matchesInner) {
+                //                        if (
+                //                            $matchesInner[2] == $matchesInner[1]
+                //                        ) {
+                //                            return $matchesInner[1];
+                //                        }
+                //                        return $matchesInner[2]
+                //                            . ': '
+                //                            . $matchesInner[1];
+                //                    },
+                //                    $match
+                //                );
+                //            }
+                //        },
+                //        $textRow['data']
+                //    );
+                //    $bodydataText[] = $textRow;
+                //    $bodydataHtml[] = $htmlRow;
+                //    break;
                 case 'attachment':
                     $mail->attach(new \Swift_Attachment(
                         $row['data'][0],
@@ -325,6 +384,9 @@ class MailUtility
         }
         $textView->assign('content', $bodydataText);
         $htmlView->assign('content', $bodydataHtml);
+        //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
+        //    $bodydataHtml, null, 8, true, false
+        //);
         $domain = $settings['mailDomain'];
         if ($assetDomain) {
             $domain = $assetDomain;
