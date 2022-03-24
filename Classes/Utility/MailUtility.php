@@ -129,6 +129,28 @@ class MailUtility
     }
 
     /**
+     * Gets row from content by given type
+     *
+     * @param array $content the mail content
+     * @param string $type the type to search
+     */
+    public static function extractByType($content, $type)
+    {
+        $elementPosition = array_search(
+            $type,
+            array_column($content, 'type')
+        );
+        if (!$elementPosition === false) {
+            return;
+        }
+        if (!array_key_exists('data', $content[$elementPosition])) {
+            return;
+        }
+        return $content[$elementPosition]['data'];
+    }
+
+
+    /**
      * tages maildata, builds html and text mails an decides where to send them
      * allows to intercept sender for testing
      *
