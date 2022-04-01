@@ -14,7 +14,13 @@
 <f:for each="{content}" as="row" key="rowKey" iteration="rowI" >
   <v:condition.type.isArray value="{row.data}">
     <f:else>
-      <f:if condition="{v:condition.string.contains(haystack: '{row.type}', needle: 'headline', then: '1')} || {row.type} == 'text'">
+      <f:if condition="{v:condition.string.contains(haystack: '{row.type}', needle: 'headline', then: '1')}
+        || {row.type} == 'text'
+        || {row.type} == 'button'
+        || {row.type} == 'buttonleft'
+        || {row.type} == 'buttoncenter'
+        || {row.type} == 'buttonright'
+      ">
         <!--[if mso | IE]>
           <table align="center" border="0" cellpadding="0" cellspacing="0" class="" style="width:{width}px;" width="{width}" >
             <tr>
@@ -37,8 +43,19 @@
                           <td style="vertical-align:top;padding:0;">
                             <table border="0" cellpadding="0" cellspacing="0" role="presentation" style width="100%">
                               <tr>
-                                <td align="left" style="font-size:0px;padding:0;word-break:break-word;">
-                                  <div style="font-family:Arial, sans-serif;font-size:16px;line-height:1.4;text-align:left;color:#000000;">
+                                 <f:switch expression="{row.type}">
+                                  <f:case value="buttonright">
+                                    <f:variable name='align' value='right' />
+                                  </f:case>
+                                  <f:case value="buttoncenter">
+                                    <f:variable name='align' value='center' />
+                                  </f:case>
+                                  <f:defaultCase>
+                                    <f:variable name='align' value='left' />
+                                  </f:defaultCase>
+                                </f:switch>
+                                <td align="{align}" style="font-size:0px;padding:0;word-break:break-word;">
+                                  <div style="font-family:Arial, sans-serif;font-size:16px;line-height:1.4;text-align:{align};color:#000000;">
                                     <f:switch expression="{row.type}">
                                       <f:case value="headline">
                                         <h1>{row.data -> f:format.nl2br() -> f:format.raw()}</h1>
@@ -48,6 +65,26 @@
                                       </f:case>
                                       <f:case value="headline3">
                                         <h3>{row.data -> f:format.nl2br() -> f:format.raw()}</h3>
+                                      </f:case>
+                                      <f:case value="button">
+                                        <span style="display: inline-block;" class="buttonwrapper">
+                                          {row.data -> f:format.nl2br() -> f:format.raw()}
+                                        </span>
+                                      </f:case>
+                                      <f:case value="buttonleft">
+                                        <span style="display: inline-block;" class="buttonwrapper">
+                                          {row.data -> f:format.nl2br() -> f:format.raw()}
+                                        </span>
+                                      </f:case>
+                                      <f:case value="buttoncenter">
+                                        <span style="display: inline-block;" class="buttonwrapper">
+                                          {row.data -> f:format.nl2br() -> f:format.raw()}
+                                        </span>
+                                      </f:case>
+                                      <f:case value="buttonright">
+                                        <span style="display: inline-block;" class="buttonwrapper">
+                                          {row.data -> f:format.nl2br() -> f:format.raw()}
+                                        </span>
                                       </f:case>
                                       <f:defaultCase>
                                         <p>{row.data -> f:format.nl2br() -> f:format.raw()}</p>
