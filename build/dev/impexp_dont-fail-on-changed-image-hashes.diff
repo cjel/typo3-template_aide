@@ -1,0 +1,12 @@
+--- webroot/typo3/sysext/impexp/Classes/Import.php	2022-04-22 12:43:09.439221153 +0200
++++ webroot/typo3/sysext/impexp/Classes/Import.php	2022-04-22 12:43:27.169242298 +0200
+@@ -446,7 +446,8 @@
+                 }
+ 
+                 if ($newFile->getSha1() !== $fileRecord['sha1']) {
+-                    $this->error('Error: The hash of the written file is not identical to the import data! File could be corrupted! File: "' . $fileRecord['identifier'] . '" with storage uid "' . $fileRecord['storage'] . '"');
++                    print('Error: The hash of the written file is not identical to the import data! File could be corrupted! File: "' . $fileRecord['identifier'] . '" with storage uid "' . $fileRecord['storage'] . '"');
++                    print(PHP_EOL);
+                 }
+             }
+ 
