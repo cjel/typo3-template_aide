@@ -34,6 +34,13 @@ class SiteConfigViewHelper extends AbstractViewHelper
            'The config key to get',
            true
        );
+       $this->registerArgument(
+           'siteConfig',
+           'bool',
+           'Limit the typoscript to the config.site part',
+           false,
+           true
+       );
    }
 
    /**
@@ -51,7 +58,7 @@ class SiteConfigViewHelper extends AbstractViewHelper
    ) {
        return SiteConfigUtility::getByPath(
            $arguments['key'],
-           false
+           $arguments['siteConfig']
        );
    }
 }

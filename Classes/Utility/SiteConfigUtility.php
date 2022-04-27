@@ -15,6 +15,7 @@ namespace Cjel\TemplatesAide\Utility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Core\TypoScript\Parser\TypoScriptParser;
 
 /**
  * Utility to work with site config
@@ -35,20 +36,33 @@ class SiteConfigUtility
         $objectManager = GeneralUtility::makeInstance(
             ObjectManager::class
         );
+        $typoScriptParser = GeneralUtility::makeInstance(
+            TypoScriptParser::class
+        );
         $configurationManager = $objectManager->get(
             ConfigurationManagerInterface::class
         );
         $typoscript = $configurationManager->getConfiguration(
             ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
         );
-        $typoscript = GeneralUtility::removeDotsFromTS($typoscript);
         $siteConfig = $typoscript;
         if ($limitToSiteConfig) {
-            $siteConfig = $typoscript['config']['site'];
+            $siteConfig = $typoscript['config.']['site.'];
         }
         $current = &$siteConfig;
         foreach ($pathParts as $key) {
+            if ($current[$key . '.']) {
+                $key .= '.';
+            }
             $current = &$current[$key];
+            if (isset($current[0]) && $current[0] === '<') {
+                $searchkey = trim(substr($current, 1));
+                list($name, $conf) = $typoScriptParser->getVal(
+                  $searchkey,
+                  $typoscript
+                );
+                $current = $conf;
+            }
         }
         if (is_array($current)
             && array_key_exists('value', $current)
