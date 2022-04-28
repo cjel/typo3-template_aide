@@ -65,3 +65,14 @@ call_user_func(
 
     }
 );
+
+$GLOBALS['TYPO3_USER_SETTINGS']['columns']['disableDragModal'] = [
+    'type'  => 'check',
+    'label' => 'LLL:EXT:templates_aide/Resources/Private/Language/locallang.xlf:disableDragModal',
+];
+$GLOBALS['TYPO3_USER_SETTINGS']['showitem'] = str_replace(
+    'recursiveDelete',
+    'recursiveDelete,disableDragModal',
+    $GLOBALS['TYPO3_USER_SETTINGS']['showitem'],
+);
+
