@@ -45,7 +45,11 @@ class ArrayUtility
                 $value = self::removeEmptyStrings($value);
             } else {
                 if (is_string($value) && !strlen($value)) {
-                    unset($array[$key]);
+                    if (is_array($array)) {
+                        unset($array[$key]);
+                    } else {
+                        unset($array->$key);
+                    }
                 }
             }
         }
