@@ -1,0 +1,37 @@
+*** webroot/typo3/sysext/core/Classes/DataHandling/DataHandler.php.orig	2022-04-22 13:15:26.314780488 +0200
+--- webroot/typo3/sysext/core/Classes/DataHandling/DataHandler.php	2022-04-22 13:15:39.018129312 +0200
+*************** class DataHandler implements LoggerAware
+*** 7431,7446 ****
+                  }
+                  $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table);
+                  $insertErrorMessage = '';
+!                 try {
+                      // Execute the INSERT query:
+                      $connection->insert(
+                          $table,
+                          $fieldArray,
+                          $typeArray
+                      );
+!                 } catch (DBALException $e) {
+!                     $insertErrorMessage = $e->getPrevious()->getMessage();
+!                 }
+                  // If succees, do...:
+                  if ($insertErrorMessage === '') {
+                      // Set mapping for NEW... -> real uid:
+--- 7431,7446 ----
+                  }
+                  $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($table);
+                  $insertErrorMessage = '';
+!                 //try {
+                      // Execute the INSERT query:
+                      $connection->insert(
+                          $table,
+                          $fieldArray,
+                          $typeArray
+                      );
+!                 //} catch (DBALException $e) {
+!                 //    $insertErrorMessage = $e->getPrevious()->getMessage();
+!                 //}
+                  // If succees, do...:
+                  if ($insertErrorMessage === '') {
+                      // Set mapping for NEW... -> real uid:
