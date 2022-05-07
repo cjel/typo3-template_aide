@@ -1,0 +1,41 @@
+--- a/Resources/Public/JavaScript/SvgTree.js	2022-04-28 12:32:01.961189044 +0200
++++ b/Resources/Public/JavaScript/SvgTree.js	2022-04-28 12:32:06.047858227 +0200
+@@ -37,6 +37,7 @@
+         showCheckboxes: false,
+         showIcons: false,
+         allowRecursiveDelete: false,
++        disableDragModal: false,
+         marginTop: 15,
+         nodeHeight: 20,
+         indentWidth: 16,
+--- a/Resources/Public/JavaScript/PageTree/PageTreeDragDrop.js	2022-04-28 11:43:41.046705421 +0200
++++ b/Resources/Public/JavaScript/PageTree/PageTreeDragDrop.js	2022-04-28 12:30:40.741138721 +0200
+@@ -275,6 +275,10 @@
+           var modalText = options.position === 'in' ? TYPO3.lang['mess.move_into'] : TYPO3.lang['mess.move_after'];
+           modalText = modalText.replace('%s', options.node.name).replace('%s', options.target.name);
+ 
++          if (tree.settings.disableDragModal) {
++            options.command = 'move';
++            tree.sendChangeCommand(options);
++          } else {
+           Modal.confirm(
+             TYPO3.lang.move_page,
+             modalText,
+@@ -307,6 +311,7 @@
+ 
+               Modal.dismiss();
+             });
++          }
+         } else if (tree.nodeIsOverDelete) {
+           var options = _this.changeNodePosition({droppedNode: droppedNode, command: 'delete'});
+           if (tree.settings.displayDeleteConfirmation) {
+--- a/Classes/Controller/Page/TreeController.php	2022-04-28 13:00:20.025466105 +0200
++++ b/Classes/Controller/Page/TreeController.php	2022-04-28 13:00:22.312133921 +0200
+@@ -155,6 +155,7 @@
+             'doktypes' => $this->getDokTypes(),
+             'displayDeleteConfirmation' => $this->getBackendUser()->jsConfirmation(JsConfirmation::DELETE),
+             'temporaryMountPoint' => $this->getMountPointPath((int)($this->getBackendUser()->uc['pageTree_temporaryMountPoint'] ?? 0)),
++            'disableDragModal' => !empty($this->getBackendUser()->uc['disableDragModal'])
+         ];
+ 
+         return new JsonResponse($configuration);

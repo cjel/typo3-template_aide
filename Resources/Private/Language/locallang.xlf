@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2020-07-16T21:32:04Z">
+	<file source-language="en" datatype="plaintext" original="messages" date="2022-04-28T10:23:09Z">
 		<header>
 			<generator>LFEditor</generator>
 		</header>
 		<body>
 			<trans-unit id="default">
 				<source><![CDATA[Default]]></source>
+			</trans-unit>
+			<trans-unit id="disableDragModal">
+				<source><![CDATA[Disable drag and drop confirmation in page tree]]></source>
 			</trans-unit>
 			<trans-unit id="homepage">
 				<source><![CDATA[Homepage]]></source>

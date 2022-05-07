@@ -40,7 +40,7 @@ call_user_func(
                 'EXT:templates_aide/Resources/Public/Css/backend/production-stage';
         }
 
-        $GLOBALS['TBE_STYLES']['skins']['backend']['stylesheetDirectories']['default'] =
+        $GLOBALS['TBE_STYLES']['skins']['backend']['stylesheetDirectories']['templates_aide_default'] =
             'EXT:templates_aide/Resources/Public/Css/backend/default';
 
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::registerPageTSConfigFile(
@@ -65,3 +65,14 @@ call_user_func(
 
     }
 );
+
+$GLOBALS['TYPO3_USER_SETTINGS']['columns']['disableDragModal'] = [
+    'type'  => 'check',
+    'label' => 'LLL:EXT:templates_aide/Resources/Private/Language/locallang.xlf:disableDragModal',
+];
+$GLOBALS['TYPO3_USER_SETTINGS']['showitem'] = str_replace(
+    'recursiveDelete',
+    'recursiveDelete,disableDragModal',
+    $GLOBALS['TYPO3_USER_SETTINGS']['showitem'],
+);
+
